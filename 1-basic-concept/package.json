@@ -1,5 +1,9 @@
 {
   "devDependencies": {
     "@types/node": "^18.11.9"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.json",
+    "dev": "tsc -w"
   }
 }
