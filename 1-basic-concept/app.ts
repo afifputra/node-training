@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 
+const fs = require("fs");
 const http = require("http");
 
 const rqListener = (req: IncomingMessage, res: ServerResponse) => {
@@ -13,17 +14,16 @@ const rqListener = (req: IncomingMessage, res: ServerResponse) => {
     return res.end();
   } else if (url === "/message" && method === "POST") {
     const body: any[] = [];
-    req.on("data", (chunk) => {
-      console.log(chunk);
+
+    req.on("data", (chunk: any) => {
       body.push(chunk);
     });
+
     req.on("end", () => {
       const parsedBody = Buffer.concat(body).toString();
-      console.log(parsedBody);
+      const message = parsedBody.split("=")[1];
+      fs.writeFileSync("message.txt", message);
     });
-    res.statusCode = 302;
-    res.setHeader("Location", "/");
-    return res.end();
   }
 
   // res.setHeader("Content-Type", "application/json");
