@@ -1,0 +1,16 @@
+{
+  "name": "nodejs-basic",
+  "version": "1.0.0",
+  "description": "Basic NodeJS app",
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "nodemon": "^2.0.20"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.json",
+    "dev": "tsc -w",
+    "start": "nodemon dist/app.js"
+  },
+  "author": "Afif Putra Haryono",
+  "license": "ISC"
+}
