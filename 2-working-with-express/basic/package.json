@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.json",
     "dev": "tsc -w",
-    "start": "nodemon dist/src/app.js"
+    "start": "nodemon dist/app.js"
   },
   "author": "Afif Putra Haryono",
   "license": "ISC",
