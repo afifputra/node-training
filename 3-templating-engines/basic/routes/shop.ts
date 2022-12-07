@@ -12,6 +12,7 @@ router.get("/", (req, res, next) => {
   res.render("shop", {
     prods: products,
     docTitle: "Shop",
+    path: "/",
   });
 });
 
