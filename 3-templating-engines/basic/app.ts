@@ -1,15 +1,18 @@
+import path from "path";
+
 import express from "express";
 import bodyParser from "body-parser";
-import path from "path";
 
 const app = express();
 
 const rootDir = require("./utils/path");
-
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
-app.set("view engine", "pug");
+const expressHbs = require("express-handlebars");
+
+app.engine("hbs", expressHbs());
+app.set("view engine", "hbs");
 app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
