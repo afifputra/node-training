@@ -4,14 +4,15 @@ import path from "path";
 const router = Router();
 
 const rootDir = require("../utils/path");
-const adminRoutes = require("./admin");
-
-const adminData = adminRoutes.products;
+const adminData = require("./admin");
 
 router.get("/", (req, res, next) => {
-  console.log(adminData);
+  const products = adminData.products;
   // res.sendFile(path.join(rootDir, "views", "shop.html"));
-  res.render("shop");
+  res.render("shop", {
+    prods: products,
+    docTitle: "Shop",
+  });
 });
 
 module.exports = router;
