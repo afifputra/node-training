@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-
-const products: {
-  title: string;
-}[] = [];
+const Product = require("../models/product");
 
 module.exports.getAddProduct = (req: Request, res: Response, next: NextFunction) => {
   res.render("add-product", {
@@ -16,11 +13,13 @@ module.exports.getAddProduct = (req: Request, res: Response, next: NextFunction)
 
 module.exports.postAddProduct = (req: Request, res: Response, next: NextFunction) => {
   const title: string = req.body.title;
-  products.push({ title });
+  const product = new Product(title);
+  product.save();
   res.redirect("/");
 };
 
 module.exports.getProducts = (req: Request, res: Response, next: NextFunction) => {
+  const products = Product.fetchAll();
   res.render("shop", {
     prods: products,
     docTitle: "Shop",
