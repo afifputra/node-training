@@ -2,6 +2,16 @@ import fs from "fs";
 import path from "path";
 
 const pathRoot = path.join(path.dirname(require.main?.filename!), "../", "data", "products.json");
+
+const getProductsFromFile = (callback: (products: { title: string }[]) => void) => {
+  fs.readFile(pathRoot, (err, fileContent) => {
+    if (err) {
+      callback([]);
+    } else {
+      callback(JSON.parse(fileContent.toString()));
+    }
+  });
+};
 module.exports = class Product {
   title: string;
 
@@ -10,27 +20,15 @@ module.exports = class Product {
   }
 
   save() {
-    fs.readFile(pathRoot, (err, fileContent) => {
-      let savedProducts: Product[] = [];
-
-      if (!err) {
-        savedProducts = JSON.parse(fileContent.toString());
-      }
-
-      savedProducts.push(this);
-
-      fs.writeFile(pathRoot, JSON.stringify(savedProducts), (err) => {
+    getProductsFromFile((products: { title: string }[]) => {
+      products.push(this);
+      fs.writeFile(pathRoot, JSON.stringify(products), (err) => {
         console.log(err);
       });
     });
   }
 
-  static async fetchAll(callback: (products: Product[]) => void) {
-    fs.readFile(pathRoot, (err, fileContent) => {
-      if (err) {
-        callback([]);
-      }
-      callback(JSON.parse(fileContent.toString()));
-    });
+  static async fetchAll(callback: (products: { title: string }[]) => void) {
+    getProductsFromFile(callback);
   }
 };
