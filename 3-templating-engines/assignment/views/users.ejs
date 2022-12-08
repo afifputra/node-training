@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%-include('includes/head.ejs') %>
+  </head>
+
+  <body>
+    <%-include('includes/navigation.ejs') %>
+    <main>
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <% if (users.length === 0) { %>
+            <h1>No Users Found!</h1>
+            <% } else { %>
+            <ul class="list-group">
+              <% users.forEach(user => {%>
+              <li class="list-group-item"><%= user.username %></li>
+              <% }); %>
+            </ul>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </main>
+    <%-include('includes/script.ejs') %>
+  </body>
+</html>
