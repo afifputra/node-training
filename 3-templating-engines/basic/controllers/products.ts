@@ -7,7 +7,7 @@ type Product = {
 };
 
 module.exports.getAddProduct = (req: Request, res: Response, next: NextFunction) => {
-  res.render("add-product", {
+  res.render("admin/add-product", {
     docTitle: "Add Product",
     path: "/admin/add-product",
     activeAddProduct: true,
@@ -25,7 +25,7 @@ module.exports.postAddProduct = (req: Request, res: Response, next: NextFunction
 
 module.exports.getProducts = (req: Request, res: Response, next: NextFunction) => {
   Product.fetchAll((products: Product[]) => {
-    res.render("shop", {
+    res.render("shop/product-list", {
       prods: products,
       docTitle: "Shop",
       path: "/",
