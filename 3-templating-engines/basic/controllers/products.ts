@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from "express";
+
 const Product = require("../models/product");
+
+type Product = {
+  title: string;
+};
 
 module.exports.getAddProduct = (req: Request, res: Response, next: NextFunction) => {
   res.render("add-product", {
@@ -19,13 +24,14 @@ module.exports.postAddProduct = (req: Request, res: Response, next: NextFunction
 };
 
 module.exports.getProducts = (req: Request, res: Response, next: NextFunction) => {
-  const products = Product.fetchAll();
-  res.render("shop", {
-    prods: products,
-    docTitle: "Shop",
-    path: "/",
-    hasProducts: products.length > 0,
-    activeShop: true,
-    productCss: true,
+  Product.fetchAll((products: Product[]) => {
+    res.render("shop", {
+      prods: products,
+      docTitle: "Shop",
+      path: "/",
+      hasProducts: products.length > 0,
+      activeShop: true,
+      productCss: true,
+    });
   });
 };

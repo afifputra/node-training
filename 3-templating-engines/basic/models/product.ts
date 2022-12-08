@@ -1,12 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-type Product = {
-  title: string;
-};
-
 const pathRoot = path.join(path.dirname(require.main?.filename!), "../", "data", "products.json");
-
 module.exports = class Product {
   title: string;
 
@@ -30,13 +25,12 @@ module.exports = class Product {
     });
   }
 
-  static fetchAll() {
+  static async fetchAll(callback: (products: Product[]) => void) {
     fs.readFile(pathRoot, (err, fileContent) => {
       if (err) {
-        return [];
+        callback([]);
       }
-      const products: Product[] = JSON.parse(fileContent.toString());
-      return products;
+      callback(JSON.parse(fileContent.toString()));
     });
   }
 };
