@@ -12,11 +12,20 @@ const getProductsFromFile = (callback: (products: { title: string }[]) => void) 
     }
   });
 };
-module.exports = class Product {
-  title: string;
 
-  constructor(inputTitle: string) {
-    this.title = inputTitle;
+interface Product {
+  title: string;
+  imageUrl: string;
+  description: string;
+  price: number;
+}
+
+class Product implements Product {
+  constructor(title: string, imageUrl: string, description: string, price: number) {
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
   }
 
   save() {
@@ -31,4 +40,6 @@ module.exports = class Product {
   static async fetchAll(callback: (products: { title: string }[]) => void) {
     getProductsFromFile(callback);
   }
-};
+}
+
+module.exports = Product;
