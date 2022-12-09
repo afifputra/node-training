@@ -25,13 +25,10 @@ module.exports.postAddProduct = (req: Request, res: Response, next: NextFunction
 
 module.exports.getProducts = (req: Request, res: Response, next: NextFunction) => {
   Product.fetchAll((products: Product[]) => {
-    res.render("shop/product-list", {
+    res.render("admin/products", {
       prods: products,
-      docTitle: "Shop",
-      path: "/",
-      hasProducts: products.length > 0,
-      activeShop: true,
-      productCss: true,
+      docTitle: "Admin Products",
+      path: "/admin/products",
     });
   });
 };
