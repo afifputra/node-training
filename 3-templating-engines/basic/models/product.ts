@@ -3,7 +3,15 @@ import path from "path";
 
 const pathRoot = path.join(path.dirname(require.main?.filename!), "../", "data", "products.json");
 
-const getProductsFromFile = (callback: (products: { title: string }[]) => void) => {
+type ProductConstructor = {
+  id?: string;
+  title: string;
+  imageUrl: string;
+  description: string;
+  price: number;
+};
+
+const getProductsFromFile = (callback: (products: ProductConstructor[]) => void) => {
   fs.readFile(pathRoot, (err, fileContent) => {
     if (err) {
       callback([]);
@@ -22,7 +30,8 @@ interface Product {
 }
 
 class Product implements Product {
-  constructor(title: string, imageUrl: string, description: string, price: number) {
+  constructor(id: string, title: string, imageUrl: string, description: string, price: number) {
+    this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -30,12 +39,22 @@ class Product implements Product {
   }
 
   save() {
-    this.id = Math.random().toString();
-    getProductsFromFile((products: { title: string }[]) => {
-      products.push(this);
-      fs.writeFile(pathRoot, JSON.stringify(products), (err) => {
-        console.log(err);
-      });
+    getProductsFromFile((products: ProductConstructor[]) => {
+      console.log(this.id);
+      if (this.id) {
+        const existingProductIndex = products.findIndex((prod: ProductConstructor) => prod.id === this.id);
+        const updatedProducts = [...products];
+        updatedProducts[existingProductIndex] = this;
+        fs.writeFile(pathRoot, JSON.stringify(updatedProducts), (err) => {
+          console.log(err);
+        });
+      } else {
+        this.id = Math.random().toString();
+        products.push(this);
+        fs.writeFile(pathRoot, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      }
     });
   }
 
