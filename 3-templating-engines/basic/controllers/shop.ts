@@ -69,6 +69,14 @@ module.exports.postCart = (req: Request, res: Response, next: NextFunction) => {
   res.redirect("/cart");
 };
 
+module.exports.postCartDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
+  const productId = req.body.productId;
+  Product.findById(productId, (product: Product) => {
+    Cart.deleteProduct(productId, product.price);
+    res.redirect("/cart");
+  });
+};
+
 module.exports.getOrders = (req: Request, res: Response, next: NextFunction) => {
   res.render("shop/orders", {
     docTitle: "Your Orders",
