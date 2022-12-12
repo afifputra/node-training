@@ -40,6 +40,28 @@ class Cart {
       });
     });
   }
+
+  static deleteProduct(id: string, productPrice: number) {
+    fs.readFile(pathRoot, (err, fileContent) => {
+      if (err) {
+        return;
+      }
+
+      const updatedCart = { ...JSON.parse(fileContent.toString()) };
+      const product = updatedCart.products.find((p: Product) => p.id === id);
+      if (!product) {
+        return;
+      }
+
+      const productQty = product.qty;
+      updatedCart.products = updatedCart.products.filter((p: Product) => p.id !== id);
+      updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQty;
+
+      fs.writeFile(pathRoot, JSON.stringify(updatedCart), (err) => {
+        console.log(err);
+      });
+    });
+  }
 }
 
 module.exports = Cart;

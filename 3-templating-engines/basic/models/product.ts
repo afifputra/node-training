@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 
+const Cart = require("./cart");
+
 const pathRoot = path.join(path.dirname(require.main?.filename!), "../", "data", "products.json");
 
 type ProductConstructor = {
@@ -63,7 +65,7 @@ class Product implements Product {
       const updatedProducts = products.filter((p) => p.id !== id);
       fs.writeFile(pathRoot, JSON.stringify(updatedProducts), (err) => {
         if (!err) {
-          console.log("Product deleted");
+          Cart.deleteProduct(id, product?.price);
         }
       });
     });
