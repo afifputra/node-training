@@ -39,8 +39,16 @@ class Product implements Product {
     });
   }
 
-  static async fetchAll(callback: (products: { title: string }[]) => void) {
+  static async fetchAll(callback: (products: unknown[]) => void) {
     getProductsFromFile(callback);
+  }
+
+  static findById(id: string, callback: (product: Product) => void) {
+    getProductsFromFile((products: unknown[]) => {
+      const allProducts = products as Product[];
+      const product = allProducts.find((p) => p.id === id);
+      callback(product as Product);
+    });
   }
 }
 

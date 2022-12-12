@@ -3,7 +3,11 @@ import { Request, Response, NextFunction } from "express";
 const Product = require("../models/product");
 
 type Product = {
+  id?: string;
   title: string;
+  imageUrl: string;
+  description: string;
+  price: number;
 };
 
 module.exports.getProducts = (req: Request, res: Response, next: NextFunction) => {
@@ -11,6 +15,17 @@ module.exports.getProducts = (req: Request, res: Response, next: NextFunction) =
     res.render("shop/product-list", {
       prods: products,
       docTitle: "All Products",
+      path: "/products",
+    });
+  });
+};
+
+module.exports.getProduct = (req: Request, res: Response, next: NextFunction) => {
+  const prodId = req.params.productId;
+  Product.findById(prodId, (product: Product) => {
+    res.render("shop/product-detail", {
+      product: product,
+      docTitle: product.title,
       path: "/products",
     });
   });
