@@ -7,12 +7,9 @@ type Product = {
 };
 
 module.exports.getAddProduct = (req: Request, res: Response, next: NextFunction) => {
-  res.render("admin/add-product", {
+  res.render("admin/edit-product", {
     docTitle: "Add Product",
     path: "/admin/add-product",
-    activeAddProduct: true,
-    formsCss: true,
-    productCss: true,
   });
 };
 
@@ -25,6 +22,18 @@ module.exports.postAddProduct = (req: Request, res: Response, next: NextFunction
   const product = new Product(title, imageUrl, description, price);
   product.save();
   res.redirect("/");
+};
+
+module.exports.getEditProduct = (req: Request, res: Response, next: NextFunction) => {
+  const editMode = req.query.edit;
+  if (!editMode) {
+    return res.redirect("/");
+  }
+  res.render("admin/edit-product", {
+    docTitle: "Edit Product",
+    path: "/admin/edit-product",
+    editing: editMode,
+  });
 };
 
 module.exports.getProducts = (req: Request, res: Response, next: NextFunction) => {
