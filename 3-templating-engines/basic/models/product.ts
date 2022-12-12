@@ -40,7 +40,6 @@ class Product implements Product {
 
   save() {
     getProductsFromFile((products: ProductConstructor[]) => {
-      console.log(this.id);
       if (this.id) {
         const existingProductIndex = products.findIndex((prod: ProductConstructor) => prod.id === this.id);
         const updatedProducts = [...products];
@@ -55,6 +54,18 @@ class Product implements Product {
           console.log(err);
         });
       }
+    });
+  }
+
+  static deleteById(id: string) {
+    getProductsFromFile((products: ProductConstructor[]) => {
+      const product = products.find((p) => p.id === id);
+      const updatedProducts = products.filter((p) => p.id !== id);
+      fs.writeFile(pathRoot, JSON.stringify(updatedProducts), (err) => {
+        if (!err) {
+          console.log("Product deleted");
+        }
+      });
     });
   }
 

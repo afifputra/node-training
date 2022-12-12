@@ -3,7 +3,11 @@ import { Request, Response, NextFunction } from "express";
 const Product = require("../models/product");
 
 type Product = {
+  id?: string;
   title: string;
+  imageUrl: string;
+  description: string;
+  price: number;
 };
 
 module.exports.getAddProduct = (req: Request, res: Response, next: NextFunction) => {
@@ -67,4 +71,10 @@ module.exports.getProducts = (req: Request, res: Response, next: NextFunction) =
       path: "/admin/products",
     });
   });
+};
+
+module.exports.postDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
+  const prodId = req.body.productId;
+  Product.deleteById(prodId);
+  res.redirect("/admin/products");
 };
