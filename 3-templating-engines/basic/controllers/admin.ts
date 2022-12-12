@@ -10,6 +10,7 @@ module.exports.getAddProduct = (req: Request, res: Response, next: NextFunction)
   res.render("admin/edit-product", {
     docTitle: "Add Product",
     path: "/admin/add-product",
+    editing: false,
   });
 };
 
@@ -26,13 +27,23 @@ module.exports.postAddProduct = (req: Request, res: Response, next: NextFunction
 
 module.exports.getEditProduct = (req: Request, res: Response, next: NextFunction) => {
   const editMode = req.query.edit;
+
   if (!editMode) {
     return res.redirect("/");
   }
-  res.render("admin/edit-product", {
-    docTitle: "Edit Product",
-    path: "/admin/edit-product",
-    editing: editMode,
+
+  const prodId = req.params.productId;
+
+  Product.findById(prodId, (product: Product) => {
+    if (!product) {
+      return res.redirect("/");
+    }
+    res.render("admin/edit-product", {
+      docTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: editMode,
+      product: product,
+    });
   });
 };
 
