@@ -48,6 +48,12 @@ module.exports.getCart = (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
+module.exports.postCart = (req: Request, res: Response, next: NextFunction) => {
+  const productId = req.body.productId;
+  console.log(productId);
+  res.redirect("/cart");
+};
+
 module.exports.getOrders = (req: Request, res: Response, next: NextFunction) => {
   res.render("shop/orders", {
     docTitle: "Your Orders",
