@@ -21,7 +21,7 @@ class Cart {
       }
 
       // Analyze the cart => Find existing product
-      const existingProductIndex: unknown = cart.products.findIndex((p) => p.id === id);
+      const existingProductIndex = cart.products.findIndex((p: Product) => p.id === id);
       const existingProduct: Product = cart.products[existingProductIndex as number];
       let updatedProduct;
       // Add new product/ increase quantity
@@ -60,6 +60,17 @@ class Cart {
       fs.writeFile(pathRoot, JSON.stringify(updatedCart), (err) => {
         console.log(err);
       });
+    });
+  }
+
+  static getCart(callback: (cart: { products: Product[]; totalPrice: number }) => void) {
+    fs.readFile(pathRoot, (err, fileContent) => {
+      const cart = JSON.parse(fileContent.toString());
+      if (err) {
+        callback({ products: [], totalPrice: 0 });
+      } else {
+        callback(cart);
+      }
     });
   }
 }
