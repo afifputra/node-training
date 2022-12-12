@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 const Product = require("../models/product");
+const Cart = require("../models/cart");
 
 type Product = {
   id?: string;
@@ -50,7 +51,9 @@ module.exports.getCart = (req: Request, res: Response, next: NextFunction) => {
 
 module.exports.postCart = (req: Request, res: Response, next: NextFunction) => {
   const productId = req.body.productId;
-  console.log(productId);
+  Product.findById(productId, (product: Product) => {
+    Cart.addProduct(productId, product.price);
+  });
   res.redirect("/cart");
 };
 
