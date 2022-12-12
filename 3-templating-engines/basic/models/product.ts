@@ -14,6 +14,7 @@ const getProductsFromFile = (callback: (products: { title: string }[]) => void) 
 };
 
 interface Product {
+  id?: string;
   title: string;
   imageUrl: string;
   description: string;
@@ -29,6 +30,7 @@ class Product implements Product {
   }
 
   save() {
+    this.id = Math.random().toString();
     getProductsFromFile((products: { title: string }[]) => {
       products.push(this);
       fs.writeFile(pathRoot, JSON.stringify(products), (err) => {
