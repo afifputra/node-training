@@ -18,7 +18,9 @@ class Product implements Product {
     this.price = price;
   }
 
-  save() {}
+  save() {
+    return db.execute(`INSERT INTO products (title, price, image_url, description) VALUES (?, ?, ?, ?)`, [this.title, this.price, this.imageUrl, this.description]);
+  }
 
   static deleteById(id: string) {}
 
