@@ -28,7 +28,9 @@ class Product implements Product {
     return db.execute("SELECT * FROM products");
   }
 
-  static findById(id: string) {}
+  static findById(id: string) {
+    return db.execute("SELECT * FROM products WHERE products.id = ?", [id]);
+  }
 }
 
 module.exports = Product;

@@ -25,13 +25,15 @@ module.exports.getProducts = (req: Request, res: Response, next: NextFunction) =
 
 module.exports.getProduct = (req: Request, res: Response, next: NextFunction) => {
   const prodId = req.params.productId;
-  Product.findById(prodId, (product: Product) => {
-    res.render("shop/product-detail", {
-      product: product,
-      docTitle: product.title,
-      path: "/products",
-    });
-  });
+  Product.findById(prodId)
+    .then(([product]: [Product[]]) => {
+      res.render("shop/product-detail", {
+        product: product[0],
+        docTitle: product[0].title,
+        path: "/products",
+      });
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 module.exports.getIndex = (req: Request, res: Response, next: NextFunction) => {
