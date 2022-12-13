@@ -12,13 +12,15 @@ type Product = {
 };
 
 module.exports.getProducts = (req: Request, res: Response, next: NextFunction) => {
-  Product.fetchAll((products: Product[]) => {
-    res.render("shop/product-list", {
-      prods: products,
-      docTitle: "All Products",
-      path: "/products",
-    });
-  });
+  Product.fetchAll()
+    .then(([rows, fieldData]: [Product[], any]) => {
+      res.render("shop/product-list", {
+        prods: rows,
+        docTitle: "All Products",
+        path: "/products",
+      });
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 module.exports.getProduct = (req: Request, res: Response, next: NextFunction) => {
@@ -33,13 +35,15 @@ module.exports.getProduct = (req: Request, res: Response, next: NextFunction) =>
 };
 
 module.exports.getIndex = (req: Request, res: Response, next: NextFunction) => {
-  Product.fetchAll((products: Product[]) => {
-    res.render("shop/index", {
-      prods: products,
-      docTitle: "Shop",
-      path: "/",
-    });
-  });
+  Product.fetchAll()
+    .then(([rows, fieldData]: [Product[], any]) => {
+      res.render("shop/index", {
+        prods: rows,
+        docTitle: "Shop",
+        path: "/",
+      });
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 module.exports.getCart = (req: Request, res: Response, next: NextFunction) => {

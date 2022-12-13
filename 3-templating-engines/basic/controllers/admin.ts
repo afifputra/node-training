@@ -64,13 +64,15 @@ module.exports.postEditProduct = (req: Request, res: Response, next: NextFunctio
 };
 
 module.exports.getProducts = (req: Request, res: Response, next: NextFunction) => {
-  Product.fetchAll((products: Product[]) => {
-    res.render("admin/products", {
-      prods: products,
-      docTitle: "Admin Products",
-      path: "/admin/products",
-    });
-  });
+  Product.fetchAll()
+    .then(([rows, fieldData]: [Product[], any]) => {
+      res.render("admin/products", {
+        prods: rows,
+        docTitle: "Admin Products",
+        path: "/admin/products",
+      });
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 module.exports.postDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
