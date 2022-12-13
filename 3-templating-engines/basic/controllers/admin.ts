@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-const Product = require("../models/product");
+import Product from "../models/product";
 
 type Product = {
   id?: string;
@@ -10,7 +10,7 @@ type Product = {
   price: number;
 };
 
-module.exports.getAddProduct = (req: Request, res: Response, next: NextFunction) => {
+const getAddProduct = (req: Request, res: Response, next: NextFunction) => {
   res.render("admin/edit-product", {
     docTitle: "Add Product",
     path: "/admin/add-product",
@@ -18,22 +18,32 @@ module.exports.getAddProduct = (req: Request, res: Response, next: NextFunction)
   });
 };
 
-module.exports.postAddProduct = (req: Request, res: Response, next: NextFunction) => {
+const postAddProduct = (req: Request, res: Response, next: NextFunction) => {
   const title: string = req.body.title;
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;
   const description: string = req.body.description;
 
-  const product = new Product(null, title, imageUrl, description, price);
-  product
-    .save()
-    .then(() => {
+  // const product = new Product(null, title, imageUrl, description, price);
+  // product
+  //   .save()
+  //   .then(() => {
+  // })
+  // .catch((error: Error) => console.log(error));
+
+  Product.create({
+    title: title,
+    price: price,
+    imageUrl: imageUrl,
+    description: description,
+  })
+    .then((result: any) => {
       res.redirect("/");
     })
     .catch((error: Error) => console.log(error));
 };
 
-module.exports.getEditProduct = (req: Request, res: Response, next: NextFunction) => {
+const getEditProduct = (req: Request, res: Response, next: NextFunction) => {
   const editMode = req.query.edit;
 
   if (!editMode) {
@@ -42,45 +52,54 @@ module.exports.getEditProduct = (req: Request, res: Response, next: NextFunction
 
   const prodId = req.params.productId;
 
-  Product.findById(prodId, (product: Product) => {
-    if (!product) {
-      return res.redirect("/");
-    }
-    res.render("admin/edit-product", {
-      docTitle: "Edit Product",
-      path: "/admin/edit-product",
-      editing: editMode,
-      product: product,
-    });
+  // Product.findById(prodId, (product: Product) => {
+  //   if (!product) {
+  //     return res.redirect("/");
+  //   }
+  res.render("admin/edit-product", {
+    docTitle: "Edit Product",
+    path: "/admin/edit-product",
+    editing: editMode,
+    product: [],
   });
+  // });
 };
 
-module.exports.postEditProduct = (req: Request, res: Response, next: NextFunction) => {
+const postEditProduct = (req: Request, res: Response, next: NextFunction) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
 
-  const updatedProduct = new Product(prodId, updatedTitle, updatedImageUrl, updatedDesc, updatedPrice);
-  updatedProduct.save();
+  // const updatedProduct = new Product(prodId, updatedTitle, updatedImageUrl, updatedDesc, updatedPrice);
+  // updatedProduct.save();
   res.redirect("/admin/products");
 };
 
-module.exports.getProducts = (req: Request, res: Response, next: NextFunction) => {
-  Product.fetchAll()
-    .then(([rows, fieldData]: [Product[], any]) => {
-      res.render("admin/products", {
-        prods: rows,
-        docTitle: "Admin Products",
-        path: "/admin/products",
-      });
-    })
-    .catch((error: Error) => console.log(error));
+const getProducts = (req: Request, res: Response, next: NextFunction) => {
+  // Product.fetchAll()
+  //   .then(([rows, fieldData]: [Product[], any]) => {
+  res.render("admin/products", {
+    prods: [],
+    docTitle: "Admin Products",
+    path: "/admin/products",
+  });
+  // })
+  // .catch((error: Error) => console.log(error));
 };
 
-module.exports.postDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
+const postDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
   const prodId = req.body.productId;
-  Product.deleteById(prodId);
+  // Product.deleteById(prodId);
   res.redirect("/admin/products");
+};
+
+export default {
+  getAddProduct,
+  postAddProduct,
+  getEditProduct,
+  postEditProduct,
+  getProducts,
+  postDeleteProduct,
 };

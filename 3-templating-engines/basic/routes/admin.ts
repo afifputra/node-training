@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-const router = Router();
+import adminController from "../controllers/admin";
 
-const adminController = require("../controllers/admin");
+const router = Router();
 
 // GET => /admin/add-product
 router.get("/add-product", adminController.getAddProduct);
@@ -22,4 +22,4 @@ router.post("/edit-product", adminController.postEditProduct);
 // POST => /admin/delete-product
 router.post("/delete-product", adminController.postDeleteProduct);
 
-module.exports = router;
+export default router;
