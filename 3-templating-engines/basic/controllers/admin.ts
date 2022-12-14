@@ -24,20 +24,13 @@ const postAddProduct = (req: Request, res: Response, next: NextFunction) => {
   const price: number = req.body.price;
   const description: string = req.body.description;
 
-  // const product = new Product(null, title, imageUrl, description, price);
-  // product
-  //   .save()
-  //   .then(() => {
-  // })
-  // .catch((error: Error) => console.log(error));
-
   Product.create({
     title: title,
     price: price,
     imageUrl: imageUrl,
     description: description,
   })
-    .then((result: any) => {
+    .then(() => {
       res.redirect("/");
     })
     .catch((error: Error) => console.log(error));
@@ -52,17 +45,20 @@ const getEditProduct = (req: Request, res: Response, next: NextFunction) => {
 
   const prodId = req.params.productId;
 
-  // Product.findById(prodId, (product: Product) => {
-  //   if (!product) {
-  //     return res.redirect("/");
-  //   }
-  res.render("admin/edit-product", {
-    docTitle: "Edit Product",
-    path: "/admin/edit-product",
-    editing: editMode,
-    product: [],
-  });
-  // });
+  Product.findByPk(prodId)
+    .then((result: unknown) => {
+      const product = result as Product;
+      if (!product) {
+        return res.redirect("/");
+      }
+      res.render("admin/edit-product", {
+        docTitle: "Edit Product",
+        path: "/admin/edit-product",
+        editing: editMode,
+        product: product,
+      });
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 const postEditProduct = (req: Request, res: Response, next: NextFunction) => {
@@ -72,27 +68,43 @@ const postEditProduct = (req: Request, res: Response, next: NextFunction) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
 
-  // const updatedProduct = new Product(prodId, updatedTitle, updatedImageUrl, updatedDesc, updatedPrice);
-  // updatedProduct.save();
-  res.redirect("/admin/products");
+  Product.update(
+    {
+      title: updatedTitle,
+      price: updatedPrice,
+      imageUrl: updatedImageUrl,
+      description: updatedDesc,
+    },
+    { where: { id: prodId } }
+  )
+    .then(() => {
+      console.log("UPDATED PRODUCT");
+      res.redirect("/admin/products");
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 const getProducts = (req: Request, res: Response, next: NextFunction) => {
-  // Product.fetchAll()
-  //   .then(([rows, fieldData]: [Product[], any]) => {
-  res.render("admin/products", {
-    prods: [],
-    docTitle: "Admin Products",
-    path: "/admin/products",
-  });
-  // })
-  // .catch((error: Error) => console.log(error));
+  Product.findAll()
+    .then((result: unknown) => {
+      const products = result as Product[];
+      res.render("admin/products", {
+        prods: products,
+        docTitle: "Admin Products",
+        path: "/admin/products",
+      });
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 const postDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
   const prodId = req.body.productId;
-  // Product.deleteById(prodId);
-  res.redirect("/admin/products");
+  Product.destroy({ where: { id: prodId } })
+    .then(() => {
+      console.log("DESTROYED PRODUCT");
+      res.redirect("/admin/products");
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 export default {
