@@ -26,15 +26,16 @@ const getProducts = (req: Request, res: Response, next: NextFunction) => {
 
 const getProduct = (req: Request, res: Response, next: NextFunction) => {
   const prodId = req.params.productId;
-  // Product.findById(prodId)
-  //   .then(([product]: [Product[]]) => {
-  res.render("shop/product-detail", {
-    product: [],
-    docTitle: "Product Detail",
-    path: "/products",
-  });
-  // })
-  // .catch((error: Error) => console.log(error));
+  Product.findByPk(prodId)
+    .then((result: unknown) => {
+      const product: Product = result as Product;
+      res.render("shop/product-detail", {
+        product: product,
+        docTitle: product.title,
+        path: "/products",
+      });
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 const getIndex = (req: Request, res: Response, next: NextFunction) => {
