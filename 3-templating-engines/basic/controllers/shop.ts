@@ -12,15 +12,16 @@ type Product = {
 };
 
 const getProducts = (req: Request, res: Response, next: NextFunction) => {
-  // Product.fetchAll()
-  //   .then(([rows, fieldData]: [Product[], any]) => {
-  res.render("shop/product-list", {
-    prods: [],
-    docTitle: "All Products",
-    path: "/products",
-  });
-  // })
-  // .catch((error: Error) => console.log(error));
+  Product.findAll()
+    .then((result: unknown) => {
+      const products: Product[] = result as Product[];
+      res.render("shop/product-list", {
+        prods: products,
+        docTitle: "All Products",
+        path: "/products",
+      });
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 const getProduct = (req: Request, res: Response, next: NextFunction) => {
@@ -37,15 +38,6 @@ const getProduct = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getIndex = (req: Request, res: Response, next: NextFunction) => {
-  // Product.fetchAll()
-  // .then(([rows, fieldData]: [Product[], any]) => {
-  res.render("shop/index", {
-    prods: [],
-    docTitle: "Shop",
-    path: "/",
-  });
-  // })
-  // .catch((error: Error) => console.log(error));
   Product.findAll()
     .then((result: unknown) => {
       const products: Product[] = result as Product[];
