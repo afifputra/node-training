@@ -18,25 +18,32 @@ const getAddProduct = (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
-const postAddProduct = (req: Request, res: Response, next: NextFunction) => {
+const postAddProduct = (req: any, res: Response, next: NextFunction) => {
   const title: string = req.body.title;
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;
   const description: string = req.body.description;
-
-  Product.create({
-    title: title,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-  })
+  req.user
+    .createProduct({
+      title: title,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+    })
     .then(() => {
       res.redirect("/");
     })
     .catch((error: Error) => console.log(error));
+
+  // Product.create({
+  //   title: title,
+  //   price: price,
+  //   imageUrl: imageUrl,
+  //   description: description,
+  // })
 };
 
-const getEditProduct = (req: Request, res: Response, next: NextFunction) => {
+const getEditProduct = (req: any, res: Response, next: NextFunction) => {
   const editMode = req.query.edit;
 
   if (!editMode) {
@@ -45,9 +52,11 @@ const getEditProduct = (req: Request, res: Response, next: NextFunction) => {
 
   const prodId = req.params.productId;
 
-  Product.findByPk(prodId)
+  req.user
+    .getProducts({ where: { id: prodId } })
     .then((result: unknown) => {
-      const product = result as Product;
+      const products = result as Product[];
+      const product = products[0];
       if (!product) {
         return res.redirect("/");
       }
@@ -59,6 +68,21 @@ const getEditProduct = (req: Request, res: Response, next: NextFunction) => {
       });
     })
     .catch((error: Error) => console.log(error));
+
+  // Product.findByPk(prodId)
+  // .then((result: unknown) => {
+  //   const product = result as Product;
+  //   if (!product) {
+  //     return res.redirect("/");
+  //   }
+  //   res.render("admin/edit-product", {
+  //     docTitle: "Edit Product",
+  //     path: "/admin/edit-product",
+  //     editing: editMode,
+  //     product: product,
+  //   });
+  // })
+  // .catch((error: Error) => console.log(error));
 };
 
 const postEditProduct = (req: Request, res: Response, next: NextFunction) => {
@@ -84,8 +108,9 @@ const postEditProduct = (req: Request, res: Response, next: NextFunction) => {
     .catch((error: Error) => console.log(error));
 };
 
-const getProducts = (req: Request, res: Response, next: NextFunction) => {
-  Product.findAll()
+const getProducts = (req: any, res: Response, next: NextFunction) => {
+  req.user
+    .getProducts()
     .then((result: unknown) => {
       const products = result as Product[];
       res.render("admin/products", {
@@ -95,6 +120,17 @@ const getProducts = (req: Request, res: Response, next: NextFunction) => {
       });
     })
     .catch((error: Error) => console.log(error));
+
+  // Product.findAll()
+  //   .then((result: unknown) => {
+  //     const products = result as Product[];
+  //     res.render("admin/products", {
+  //       prods: products,
+  //       docTitle: "Admin Products",
+  //       path: "/admin/products",
+  //     });
+  //   })
+  //   .catch((error: Error) => console.log(error));
 };
 
 const postDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
