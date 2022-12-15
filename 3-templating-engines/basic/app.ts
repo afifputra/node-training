@@ -7,6 +7,8 @@ import Product from "./models/product";
 import User from "./models/user";
 import Cart from "./models/cart";
 import CartItem from "./models/cart-item";
+import Order from "./models/order";
+import OrderItem from "./models/order-item";
 
 import errorController from "./controllers/error";
 
@@ -46,8 +48,13 @@ Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
+Order.belongsTo(User);
+User.hasMany(Order);
+
+Order.belongsToMany(Product, { through: OrderItem });
+
 sequelize
-  //   .sync({ force: true })
+  // .sync({ force: true })
   .sync()
   .then(() => {
     User.findByPk(1)
