@@ -73,6 +73,8 @@ const getCart = (req: any, res: Response, next: NextFunction) => {
 const postCart = (req: any, res: Response, next: NextFunction) => {
   const productId = req.body.productId;
   let fetchedCart: any;
+  let newQuantity = 1;
+
   req.user
     .getCart()
     .then((cart: any) => {
@@ -86,19 +88,18 @@ const postCart = (req: any, res: Response, next: NextFunction) => {
         product = products[0];
       }
 
-      let newQuantity = 1;
-
       if (product) {
-        // ...
+        const oldQuantity = product.cartItem.quantity;
+        newQuantity = oldQuantity + 1;
+        return product;
       }
 
-      return Product.findByPk(productId)
-        .then((product: any) => {
-          return fetchedCart.addProduct(product, {
-            through: { quantity: newQuantity },
-          });
-        })
-        .catch((error: Error) => console.log(error));
+      return Product.findByPk(productId);
+    })
+    .then((product: any) => {
+      return fetchedCart.addProduct(product, {
+        through: { quantity: newQuantity },
+      });
     })
     .then(() => {
       res.redirect("/cart");
@@ -106,12 +107,21 @@ const postCart = (req: any, res: Response, next: NextFunction) => {
     .catch((error: Error) => console.log(error));
 };
 
-const postCartDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
+const postCartDeleteProduct = (req: any, res: Response, next: NextFunction) => {
   const productId = req.body.productId;
-  // Product.findById(productId, (product: Product) => {
-  // Cart.deleteProduct(productId, product.price);
-  res.redirect("/cart");
-  // });
+  req.user
+    .getCart()
+    .then((cart: any) => {
+      return cart.getProducts({ where: { id: productId } });
+    })
+    .then((products: Product[]) => {
+      const product: any = products[0];
+      return product.cartItem.destroy();
+    })
+    .then(() => {
+      res.redirect("/cart");
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 const getOrders = (req: Request, res: Response, next: NextFunction) => {
