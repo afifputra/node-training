@@ -216,6 +216,10 @@ form {
   color: white;
 }
 
+.mb-1 {
+  margin-bottom: 1rem !important;
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;

@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
 import Product from "../models/product";
-import Cart from "../models/cart";
 
 type Product = {
   id?: string;
@@ -131,6 +130,36 @@ const getOrders = (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
+const postOrder = (req: any, res: Response, next: NextFunction) => {
+  req.user
+    .getCart()
+    .then((cart: any) => {
+      return cart.getProducts();
+    })
+    .then((products: Product[]) => {
+      req.user
+        .createOrder()
+        .then((order: any) => {
+          return order.addProducts(
+            products.map((product: any) => {
+              product.orderItem = { quantity: product.cartItem.quantity };
+              return product;
+            })
+          );
+        })
+        .catch((error: Error) => console.log(error));
+    })
+    .then((result: any) => {
+      return req.user.getCart().then((cart: any) => {
+        return cart.setProducts(null);
+      });
+    })
+    .then(() => {
+      res.redirect("/orders");
+    })
+    .catch((error: Error) => console.log(error));
+};
+
 const getCheckout = (req: Request, res: Response, next: NextFunction) => {
   res.render("shop/checkout", {
     docTitle: "Checkout",
@@ -146,5 +175,6 @@ export default {
   postCart,
   postCartDeleteProduct,
   getOrders,
+  postOrder,
   getCheckout,
 };
