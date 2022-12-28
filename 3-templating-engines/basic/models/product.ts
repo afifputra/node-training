@@ -2,7 +2,6 @@ import { ObjectId } from "mongodb";
 import { getDb } from "../utils/database";
 
 interface ProductInterface {
-  id?: string;
   title: string;
   price: number;
   imageUrl: string;
@@ -50,6 +49,17 @@ class Product implements ProductInterface {
     const db = getDb();
     try {
       const result = await db.collection("products").deleteOne({ _id: new ObjectId(id) });
+      console.log(result);
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  static async updateById(id: string, product: ProductInterface) {
+    const db = getDb();
+    try {
+      const result = await db.collection("products").updateOne({ _id: new ObjectId(id) }, { $set: product });
       console.log(result);
       return result;
     } catch (error) {

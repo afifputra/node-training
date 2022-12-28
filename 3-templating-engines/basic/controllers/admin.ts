@@ -2,6 +2,19 @@ import { RequestHandler } from "express";
 
 import { Product } from "../models/product";
 
+const getProducts: RequestHandler = async (_, res, __) => {
+  try {
+    const products = await Product.fetchAll();
+    res.render("admin/products", {
+      prods: products ? products : [],
+      docTitle: "Admin Products",
+      path: "/admin/products",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getAddProduct: RequestHandler = (_, res, __) => {
   res.render("admin/edit-product", {
     docTitle: "Add Product",
@@ -47,40 +60,25 @@ const getEditProduct: RequestHandler = async (req, res, _) => {
   }
 };
 
-// const postEditProduct = (req: Request, res: Response, next: NextFunction) => {
-//   const prodId = req.body.productId;
-//   const updatedTitle = req.body.title;
-//   const updatedPrice = req.body.price;
-//   const updatedImageUrl = req.body.imageUrl;
-//   const updatedDesc = req.body.description;
+const postEditProduct: RequestHandler = async (req, res, _) => {
+  const prodId = req.body.productId;
+  const updatedTitle = req.body.title;
+  const updatedPrice = req.body.price;
+  const updatedImageUrl = req.body.imageUrl;
+  const updatedDesc = req.body.description;
 
-//   Product.update(
-//     {
-//       title: updatedTitle,
-//       price: updatedPrice,
-//       imageUrl: updatedImageUrl,
-//       description: updatedDesc,
-//     },
-//     { where: { id: prodId } }
-//   )
-//     .then(() => {
-//       console.log("UPDATED PRODUCT");
-//       res.redirect("/admin/products");
-//     })
-//     .catch((error: Error) => console.log(error));
-// };
+  const updatedProduct = await Product.updateById(prodId, {
+    title: updatedTitle,
+    price: updatedPrice,
+    imageUrl: updatedImageUrl,
+    description: updatedDesc,
+  });
 
-const getProducts: RequestHandler = async (_, res, __) => {
-  try {
-    const products = await Product.fetchAll();
-    res.render("admin/products", {
-      prods: products ? products : [],
-      docTitle: "Admin Products",
-      path: "/admin/products",
-    });
-  } catch (error) {
-    console.log(error);
+  if (!updatedProduct) {
+    return res.redirect("/");
   }
+
+  res.redirect("/admin/products");
 };
 
 const postDeleteProduct: RequestHandler = async (req, res, _) => {
@@ -100,9 +98,10 @@ const postDeleteProduct: RequestHandler = async (req, res, _) => {
 };
 
 export default {
+  getProducts,
   getAddProduct,
   postAddProduct,
   getEditProduct,
-  getProducts,
+  postEditProduct,
   postDeleteProduct,
 };
