@@ -35,7 +35,11 @@ class Product implements ProductInterface {
   static async findById(id: string) {
     const db = getDb();
     try {
-      const product = await db.collection("products").findOne({ _id: new ObjectId(id) });
+      // const product = await db.collection("products").findOne({ _id: new ObjectId(id) });
+      const product = await db
+        .collection("products")
+        .find({ _id: new ObjectId(id) })
+        .next();
       return product;
     } catch (error) {
       console.log(error);
