@@ -6,7 +6,7 @@ const getProducts: RequestHandler = async (_, res, __) => {
   try {
     const products = await Product.fetchAll();
     res.render("shop/product-list", {
-      prods: products,
+      prods: products ? products : [],
       docTitle: "All Products",
       path: "/products",
     });
@@ -14,19 +14,37 @@ const getProducts: RequestHandler = async (_, res, __) => {
     console.log(error);
   }
 };
-// const getProduct = (req: Request, res: Response, next: NextFunction) => {
-//   const prodId = req.params.productId;
-//   Product.findByPk(prodId)
-//     .then((result: unknown) => {
-//       const product: Product = result as Product;
-//       res.render("shop/product-detail", {
-//         product: product,
-//         docTitle: product.title,
-//         path: "/products",
-//       });
-//     })
-//     .catch((error: Error) => console.log(error));
-// };
+
+const getProduct: RequestHandler = async (req, res, _) => {
+  const prodId = req.params.productId;
+
+  try {
+    const product = await Product.findById(prodId);
+
+    if (!product) {
+      return res.redirect("/");
+    }
+
+    res.render("shop/product-detail", {
+      product: product,
+      docTitle: product.title,
+      path: "/products",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
+  // Product.findByPk(prodId)
+  //   .then((result: unknown) => {
+  //     const product: Product = result as Product;
+  //     res.render("shop/product-detail", {
+  //       product: product,
+  //       docTitle: product.title,
+  //       path: "/products",
+  //     });
+  //   })
+  //   .catch((error: Error) => console.log(error));
+};
 
 const getIndex: RequestHandler = async (_, res, __) => {
   try {
@@ -174,7 +192,7 @@ const getIndex: RequestHandler = async (_, res, __) => {
 
 export default {
   getProducts,
-  // getProduct,
+  getProduct,
   getIndex,
   // getCart,
   // postCart,

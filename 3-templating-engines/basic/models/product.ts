@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { getDb } from "../utils/database";
 
 interface ProductInterface {
@@ -25,8 +26,17 @@ class Product implements ProductInterface {
     const db = getDb();
     try {
       const products = await db.collection("products").find().toArray();
-      console.log(products);
       return products;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  static async findById(id: string) {
+    const db = getDb();
+    try {
+      const product = await db.collection("products").findOne({ _id: new ObjectId(id) });
+      return product;
     } catch (error) {
       console.log(error);
     }
