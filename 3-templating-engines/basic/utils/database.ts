@@ -1,6 +1,6 @@
-import { MongoClient, MongoClientOptions } from "mongodb";
+import { MongoClient, Db } from "mongodb";
 
-let _db: MongoClientOptions;
+let _db: Db;
 
 const mongoConnect = (callback: Function) => {
   MongoClient.connect(`mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/shop?retryWrites=true&w=majority`)

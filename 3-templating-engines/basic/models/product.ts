@@ -1,10 +1,28 @@
 import { getDb } from "../utils/database";
-import { MongoClientOptions } from "mongodb";
+
+interface ProductInterface {
+  id: string;
+  title: string;
+  price: number;
+  imageUrl: string;
+  description: string;
+}
 
 class Product {
   constructor(public id: string, public title: string, public price: number, public imageUrl: string, public description: string) {}
 
-  save() {}
+  save() {
+    const db = getDb();
+    return db
+      .collection("products")
+      .insertOne(this)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 }
 
 // const Product = sequelize.define("product", {
@@ -29,4 +47,4 @@ class Product {
 //   },
 // });
 
-export default Product;
+export { Product, ProductInterface };
