@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { RequestHandler } from "express";
 
-import { Product, ProductInterface } from "../models/product";
+import { Product } from "../models/product";
 
-const getAddProduct = (req: Request, res: Response, next: NextFunction) => {
+const getAddProduct: RequestHandler = (_, res, __) => {
   res.render("admin/edit-product", {
     docTitle: "Add Product",
     path: "/admin/add-product",
@@ -10,7 +10,7 @@ const getAddProduct = (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
-const postAddProduct = async (req: Request, res: Response, next: NextFunction) => {
+const postAddProduct: RequestHandler = async (req, res, _) => {
   const title: string = req.body.title;
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;

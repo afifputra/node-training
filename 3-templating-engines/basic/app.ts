@@ -8,7 +8,7 @@ import errorController from "./controllers/error";
 
 import rootDir from "./utils/path";
 import adminRoutes from "./routes/admin";
-// import shopRoutes from "./routes/shop";
+import shopRoutes from "./routes/shop";
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.set("views", "views");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootDir, "../", "public")));
 
-app.use((req, res, next) => {
+app.use((_, __, next) => {
   // User.findByPk(1)
   //   .then((result: unknown) => {
   //     const user = result as { id: string; name: string; email: string };
@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/admin", adminRoutes);
-// app.use(shopRoutes);
+app.use(shopRoutes);
 
 app.use(errorController.get404);
 

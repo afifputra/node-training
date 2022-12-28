@@ -11,24 +11,24 @@ router.get("/", shopController.getIndex);
 router.get("/products", shopController.getProducts);
 
 // GET => /products/:productId
-router.get("/products/:productId", shopController.getProduct);
+// router.get("/products/:productId", shopController.getProduct);
 
 // GET => /cart
-router.get("/cart", shopController.getCart);
+// router.get("/cart", shopController.getCart);
 
 // POST => /cart
-router.post("/cart", shopController.postCart);
+// router.post("/cart", shopController.postCart);
 
 // POST => /cart-delete-item
-router.post("/cart-delete-item", shopController.postCartDeleteProduct);
+// router.post("/cart-delete-item", shopController.postCartDeleteProduct);
 
 // GET => /orders
-router.get("/orders", shopController.getOrders);
+// router.get("/orders", shopController.getOrders);
 
 // POST => /create-order
-router.post("/create-order", shopController.postOrder);
+// router.post("/create-order", shopController.postOrder);
 
 // GET => /checkout
-router.get("/checkout", shopController.getCheckout);
+// router.get("/checkout", shopController.getCheckout);
 
 export default router;
