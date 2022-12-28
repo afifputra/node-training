@@ -45,6 +45,17 @@ class Product implements ProductInterface {
       console.log(error);
     }
   }
+
+  static async deleteById(id: string) {
+    const db = getDb();
+    try {
+      const result = await db.collection("products").deleteOne({ _id: new ObjectId(id) });
+      console.log(result);
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 // const Product = sequelize.define("product", {

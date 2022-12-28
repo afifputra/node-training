@@ -18,7 +18,7 @@ const postAddProduct: RequestHandler = async (req, res, _) => {
 
   const product = new Product(title, price, imageUrl, description);
   await product.save();
-  res.redirect("/admin/add-product");
+  res.redirect("/");
 };
 
 const getEditProduct: RequestHandler = async (req, res, _) => {
@@ -83,19 +83,26 @@ const getProducts: RequestHandler = async (_, res, __) => {
   }
 };
 
-// const postDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
-//   const prodId = req.body.productId;
-//   Product.destroy({ where: { id: prodId } })
-//     .then(() => {
-//       console.log("DESTROYED PRODUCT");
-//       res.redirect("/admin/products");
-//     })
-//     .catch((error: Error) => console.log(error));
-// };
+const postDeleteProduct: RequestHandler = async (req, res, _) => {
+  const prodId = req.body.productId;
+
+  try {
+    const deletedProduct = await Product.deleteById(prodId);
+
+    if (!deletedProduct) {
+      return res.redirect("/");
+    }
+    console.log("DESTROYED PRODUCT");
+    res.redirect("/admin/products");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export default {
   getAddProduct,
   postAddProduct,
   getEditProduct,
   getProducts,
+  postDeleteProduct,
 };
