@@ -21,32 +21,31 @@ const postAddProduct: RequestHandler = async (req, res, _) => {
   res.redirect("/admin/add-product");
 };
 
-// const getEditProduct = (req: any, res: Response, next: NextFunction) => {
-//   const editMode = req.query.edit;
+const getEditProduct: RequestHandler = async (req, res, _) => {
+  const editMode = req.query.edit;
 
-//   if (!editMode) {
-//     return res.redirect("/");
-//   }
+  if (!editMode) {
+    return res.redirect("/");
+  }
 
-//   const prodId = req.params.productId;
+  const prodId = req.params.productId;
+  try {
+    const product = await Product.findById(prodId);
 
-//   req.user
-//     .getProducts({ where: { id: prodId } })
-//     .then((result: unknown) => {
-//       const products = result as Product[];
-//       const product = products[0];
-//       if (!product) {
-//         return res.redirect("/");
-//       }
-//       res.render("admin/edit-product", {
-//         docTitle: "Edit Product",
-//         path: "/admin/edit-product",
-//         editing: editMode,
-//         product: product,
-//       });
-//     })
-//     .catch((error: Error) => console.log(error));
-// };
+    if (!product) {
+      return res.redirect("/");
+    }
+
+    res.render("admin/edit-product", {
+      docTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: editMode,
+      product: product,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // const postEditProduct = (req: Request, res: Response, next: NextFunction) => {
 //   const prodId = req.body.productId;
@@ -71,19 +70,18 @@ const postAddProduct: RequestHandler = async (req, res, _) => {
 //     .catch((error: Error) => console.log(error));
 // };
 
-// const getProducts = (req: any, res: Response, next: NextFunction) => {
-//   req.user
-//     .getProducts()
-//     .then((result: unknown) => {
-//       const products = result as Product[];
-//       res.render("admin/products", {
-//         prods: products,
-//         docTitle: "Admin Products",
-//         path: "/admin/products",
-//       });
-//     })
-//     .catch((error: Error) => console.log(error));
-// };
+const getProducts: RequestHandler = async (_, res, __) => {
+  try {
+    const products = await Product.fetchAll();
+    res.render("admin/products", {
+      prods: products ? products : [],
+      docTitle: "Admin Products",
+      path: "/admin/products",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // const postDeleteProduct = (req: Request, res: Response, next: NextFunction) => {
 //   const prodId = req.body.productId;
@@ -98,4 +96,6 @@ const postAddProduct: RequestHandler = async (req, res, _) => {
 export default {
   getAddProduct,
   postAddProduct,
+  getEditProduct,
+  getProducts,
 };
