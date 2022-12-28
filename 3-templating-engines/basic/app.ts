@@ -2,13 +2,12 @@ import path from "path";
 import express from "express";
 import bodyParser from "body-parser";
 
-import mongoConnect from "./utils/database";
-import { MongoClientOptions } from "mongodb";
+import { mongoConnect } from "./utils/database";
 
 import errorController from "./controllers/error";
 
 import rootDir from "./utils/path";
-// import adminRoutes from "./routes/admin";
+import adminRoutes from "./routes/admin";
 // import shopRoutes from "./routes/shop";
 
 const app = express();
@@ -29,12 +28,11 @@ app.use((req, res, next) => {
   //   .catch((error: Error) => console.log(error));
 });
 
-// app.use("/admin", adminRoutes);
+app.use("/admin", adminRoutes);
 // app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect((client: MongoClientOptions) => {
-  console.log(client);
+mongoConnect(() => {
   app.listen(3000);
 });

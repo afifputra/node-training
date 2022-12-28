@@ -1,14 +1,25 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, MongoClientOptions } from "mongodb";
+
+let _db: MongoClientOptions;
 
 const mongoConnect = (callback: Function) => {
-  MongoClient.connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/?retryWrites=true&w=majority")
-    .then((result) => {
+  MongoClient.connect(`mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/shop?retryWrites=true&w=majority`)
+    .then((client) => {
       console.log("Connected!");
-      callback(result);
+      _db = client.db();
+      callback();
     })
     .catch((err) => {
       console.log(err);
+      throw err;
     });
 };
 
-export default mongoConnect;
+const getDb = () => {
+  if (_db) {
+    return _db;
+  }
+  throw "No database found!";
+};
+
+export { mongoConnect, getDb };
