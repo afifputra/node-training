@@ -1,7 +1,7 @@
 import { getDb } from "../utils/database";
 
 interface ProductInterface {
-  id: string;
+  id?: string;
   title: string;
   price: number;
   imageUrl: string;
@@ -9,19 +9,16 @@ interface ProductInterface {
 }
 
 class Product {
-  constructor(public id: string, public title: string, public price: number, public imageUrl: string, public description: string) {}
+  constructor(public title: string, public price: number, public imageUrl: string, public description: string) {}
 
-  save() {
+  async save() {
     const db = getDb();
-    return db
-      .collection("products")
-      .insertOne(this)
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    try {
+      const result = await db.collection("products").insertOne(this);
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 

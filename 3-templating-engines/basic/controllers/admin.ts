@@ -10,11 +10,15 @@ const getAddProduct = (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
-const postAddProduct = (req: Request, res: Response, next: NextFunction) => {
+const postAddProduct = async (req: Request, res: Response, next: NextFunction) => {
   const title: string = req.body.title;
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;
   const description: string = req.body.description;
+
+  const product = new Product(title, price, imageUrl, description);
+  await product.save();
+  res.redirect("/admin/add-product");
 };
 
 // const getEditProduct = (req: any, res: Response, next: NextFunction) => {
