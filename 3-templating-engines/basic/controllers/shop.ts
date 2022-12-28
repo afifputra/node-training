@@ -123,17 +123,28 @@ const postCartDeleteProduct = (req: any, res: Response, next: NextFunction) => {
     .catch((error: Error) => console.log(error));
 };
 
-const getOrders = (req: Request, res: Response, next: NextFunction) => {
-  res.render("shop/orders", {
-    docTitle: "Your Orders",
-    path: "/orders",
-  });
+const getOrders = (req: any, res: Response, next: NextFunction) => {
+  req.user
+    .getOrders({
+      include: ["products"],
+    })
+    .then((orders: any) => {
+      console.log(orders);
+      res.render("shop/orders", {
+        docTitle: "Your Orders",
+        path: "/orders",
+        orders: orders,
+      });
+    })
+    .catch((error: Error) => console.log(error));
 };
 
 const postOrder = (req: any, res: Response, next: NextFunction) => {
+  let fetchedCart: any;
   req.user
     .getCart()
     .then((cart: any) => {
+      fetchedCart = cart;
       return cart.getProducts();
     })
     .then((products: Product[]) => {
@@ -153,6 +164,9 @@ const postOrder = (req: any, res: Response, next: NextFunction) => {
       return req.user.getCart().then((cart: any) => {
         return cart.setProducts(null);
       });
+    })
+    .then((result: any) => {
+      return fetchedCart.setProducts(null);
     })
     .then(() => {
       res.redirect("/orders");
