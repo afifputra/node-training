@@ -1,8 +1,14 @@
-import { Sequelize } from "sequelize";
+import { MongoClient } from "mongodb";
 
-const sequelize = new Sequelize("node", "root", "", {
-  dialect: "mysql",
-  host: "localhost",
-});
+const mongoConnect = (callback: Function) => {
+  MongoClient.connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/?retryWrites=true&w=majority")
+    .then((result) => {
+      console.log("Connected!");
+      callback(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
-export default sequelize;
+export default mongoConnect;
