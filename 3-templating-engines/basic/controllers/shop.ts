@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import { Product } from "../models/product";
+import { Product, ProductInterface } from "../models/product";
 
 const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   try {
@@ -72,22 +72,6 @@ const getCart = async (req: Request, res: Response, _: NextFunction) => {
   } catch (error) {
     console.log(error);
   }
-  // req.user
-  //   .getCart()
-  //   .then((cart: any) => {
-  //     console.log(cart);
-  //     return cart
-  //       .getProducts()
-  //       .then((products: Product[]) => {
-  //         res.render("shop/cart", {
-  //           docTitle: "Your Cart",
-  //           path: "/cart",
-  //           products: products,
-  //         });
-  //       })
-  //       .catch((error: Error) => console.log(error));
-  //   })
-  //   .catch((error: Error) => console.log(error));
 };
 
 const postCart = async (req: Request, res: Response, __: NextFunction) => {
@@ -96,7 +80,13 @@ const postCart = async (req: Request, res: Response, __: NextFunction) => {
 
   try {
     const product = await Product.findById(productId);
-    const result = await requestUser!.addToCart(product);
+
+    if (!product) {
+      return res.redirect("/");
+    }
+
+    const finalProduct = product as ProductInterface;
+    const result = await requestUser!.addToCart(finalProduct);
 
     console.log(result);
 

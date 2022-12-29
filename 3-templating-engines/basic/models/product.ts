@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "../utils/database";
 
 interface ProductInterface {
-  id?: string | ObjectId | null;
+  _id?: string | ObjectId | null;
   title: string;
   price: number;
   imageUrl: string;
@@ -11,16 +11,16 @@ interface ProductInterface {
 }
 
 class Product implements ProductInterface {
-  constructor(public title: string, public price: number, public imageUrl: string, public description: string, public id: string | ObjectId | null, public userId: string) {
-    this.id = id ? new ObjectId(id) : null;
+  constructor(public title: string, public price: number, public imageUrl: string, public description: string, public _id: string | ObjectId | null, public userId: string) {
+    this._id = _id ? new ObjectId(_id) : null;
   }
 
   async save() {
     const db = getDb();
     try {
-      if (this.id) {
+      if (this._id) {
         const result = await db.collection("products").updateOne(
-          { _id: this.id },
+          { _id: this._id },
           {
             $set: {
               title: this.title,
@@ -31,7 +31,6 @@ class Product implements ProductInterface {
             },
           }
         );
-        console.log(result);
         return result;
       } else {
         const result = await db.collection("products").insertOne({
@@ -41,7 +40,6 @@ class Product implements ProductInterface {
           description: this.description,
           userId: this.userId,
         });
-        console.log(result);
         return result;
       }
     } catch (error) {
@@ -77,7 +75,6 @@ class Product implements ProductInterface {
     const db = getDb();
     try {
       const result = await db.collection("products").deleteOne({ _id: new ObjectId(id) });
-      console.log(result);
       return result;
     } catch (error) {
       console.log(error);

@@ -1,20 +1,30 @@
 import { ObjectId } from "mongodb";
 import { getDb } from "../utils/database";
+import { ProductInterface } from "./product";
+
+interface Items {
+  productId: string | ObjectId;
+  quantity: number;
+}
 
 interface UserInterface {
   name: string;
   email: string;
-  cart?: any;
+  cart?: {
+    items: Items[];
+  };
   _id?: string | ObjectId;
 }
 
 class User implements UserInterface {
   name: string;
   email: string;
-  cart?: any;
+  cart?: {
+    items: Items[];
+  };
   _id?: string | ObjectId;
 
-  constructor(name: string, email: string, cart?: any, _id?: string | ObjectId) {
+  constructor(name: string, email: string, cart?: { items: Items[] }, _id?: string | ObjectId) {
     this.name = name;
     this.email = email;
     this.cart = cart;
@@ -30,18 +40,18 @@ class User implements UserInterface {
     });
   }
 
-  addToCart(product: any) {
-    const cartProduct = this.cart.items.findIndex((cp: any) => {
-      return cp.productId.toString() === product._id.toString();
+  addToCart(product: ProductInterface) {
+    const cartProduct = this.cart!.items.findIndex((cp: Items) => {
+      return cp.productId.toString() === product._id!.toString();
     });
     let newQuantity = 1;
-    const updatedCartItems = [...this.cart.items];
+    const updatedCartItems = [...this.cart!.items];
 
     if (cartProduct >= 0) {
-      newQuantity = this.cart.items[cartProduct].quantity + 1;
+      newQuantity = this.cart!.items[cartProduct].quantity + 1;
       updatedCartItems[cartProduct].quantity = newQuantity;
     } else {
-      updatedCartItems.push({ productId: new ObjectId(product._id), quantity: newQuantity });
+      updatedCartItems.push({ productId: new ObjectId(product._id ? product._id : ""), quantity: newQuantity });
     }
 
     const updatedCart = { items: updatedCartItems };
@@ -52,21 +62,26 @@ class User implements UserInterface {
 
   async getCart() {
     const db = getDb();
-    const productIds = this.cart.items.map((item: any) => {
+    const cart = this.cart!;
+
+    if (!cart) return [];
+
+    const productIds = cart.items.map((item: Items) => {
       return item.productId;
     });
 
     try {
-      const products = await db
+      const products = (await db
         .collection("products")
         .find({ _id: { $in: productIds } })
-        .toArray();
-      return products.map((product: any) => {
+        .toArray()) as ProductInterface[];
+
+      return products.map((product: ProductInterface) => {
         return {
           ...product,
-          quantity: this.cart.items.find((item: any) => {
-            return item.productId.toString() === product._id.toString();
-          }).quantity,
+          quantity: cart.items.find((item: Items) => {
+            return item.productId.toString() === product._id!.toString();
+          })!.quantity,
         };
       });
     } catch (error) {
