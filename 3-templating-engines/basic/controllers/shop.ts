@@ -94,58 +94,23 @@ const postCart = async (req: Request, res: Response, __: NextFunction) => {
   } catch (error) {
     console.log(error);
   }
-
-  // let fetchedCart: any;
-  // let newQuantity = 1;
-
-  // req.user
-  //   .getCart()
-  //   .then((cart: any) => {
-  //     fetchedCart = cart;
-  //     return cart.getProducts({ where: { id: productId } });
-  //   })
-  //   .then((products: Product[]) => {
-  //     let product: any;
-
-  //     if (products.length > 0) {
-  //       product = products[0];
-  //     }
-
-  //     if (product) {
-  //       const oldQuantity = product.cartItem.quantity;
-  //       newQuantity = oldQuantity + 1;
-  //       return product;
-  //     }
-
-  //     return Product.findByPk(productId);
-  //   })
-  //   .then((product: any) => {
-  //     return fetchedCart.addProduct(product, {
-  //       through: { quantity: newQuantity },
-  //     });
-  //   })
-  //   .then(() => {
-  //     res.redirect("/cart");
-  //   })
-  //   .catch((error: Error) => console.log(error));
 };
 
-// const postCartDeleteProduct = (req: any, res: Response, next: NextFunction) => {
-//   const productId = req.body.productId;
-//   req.user
-//     .getCart()
-//     .then((cart: any) => {
-//       return cart.getProducts({ where: { id: productId } });
-//     })
-//     .then((products: Product[]) => {
-//       const product: any = products[0];
-//       return product.cartItem.destroy();
-//     })
-//     .then(() => {
-//       res.redirect("/cart");
-//     })
-//     .catch((error: Error) => console.log(error));
-// };
+const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunction) => {
+  const productId = req.body.productId;
+
+  try {
+    const result = await req.user!.deleteItemFromCart(productId);
+
+    if (!result) {
+      return res.redirect("/");
+    }
+
+    res.redirect("/cart");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // const getOrders = (req: any, res: Response, next: NextFunction) => {
 //   req.user
@@ -211,7 +176,7 @@ export default {
   getIndex,
   getCart,
   postCart,
-  // postCartDeleteProduct,
+  postCartDeleteProduct,
   // getOrders,
   // postOrder,
   // getCheckout,

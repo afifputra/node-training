@@ -89,6 +89,15 @@ class User implements UserInterface {
     }
   }
 
+  deleteItemFromCart(productId: string) {
+    const db = getDb();
+    const updatedCartItems = this.cart!.items.filter((item: Items) => {
+      return item.productId.toString() !== productId.toString();
+    });
+    const updatedCart = { items: updatedCartItems };
+    return db.collection("users").updateOne({ _id: new ObjectId(this._id) }, { $set: { cart: updatedCart } });
+  }
+
   static async findById(userId: string) {
     const db = getDb();
     try {
