@@ -31,13 +31,47 @@ class User implements UserInterface {
   }
 
   addToCart(product: any) {
-    // const cartProduct = this.cart.items.findIndex((cp: any) => {
-    //   return cp._id === product.id;
-    // });
-    const updatedCart = { items: [{ productId: new ObjectId(product._id), quantity: 1 }] };
+    const cartProduct = this.cart.items.findIndex((cp: any) => {
+      return cp.productId.toString() === product._id.toString();
+    });
+    let newQuantity = 1;
+    const updatedCartItems = [...this.cart.items];
+
+    if (cartProduct >= 0) {
+      newQuantity = this.cart.items[cartProduct].quantity + 1;
+      updatedCartItems[cartProduct].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({ productId: new ObjectId(product._id), quantity: newQuantity });
+    }
+
+    const updatedCart = { items: updatedCartItems };
     const db = getDb();
 
     return db.collection("users").updateOne({ _id: new ObjectId(this._id) }, { $set: { cart: updatedCart } });
+  }
+
+  async getCart() {
+    const db = getDb();
+    const productIds = this.cart.items.map((item: any) => {
+      return item.productId;
+    });
+
+    try {
+      const products = await db
+        .collection("products")
+        .find({ _id: { $in: productIds } })
+        .toArray();
+      return products.map((product: any) => {
+        return {
+          ...product,
+          quantity: this.cart.items.find((item: any) => {
+            return item.productId.toString() === product._id.toString();
+          }).quantity,
+        };
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   static async findById(userId: string) {
