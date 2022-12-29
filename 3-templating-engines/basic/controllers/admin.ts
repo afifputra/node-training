@@ -29,7 +29,7 @@ const postAddProduct: RequestHandler = async (req, res, _) => {
   const price: number = req.body.price;
   const description: string = req.body.description;
 
-  const product = new Product(title, price, imageUrl, description);
+  const product = new Product(title, price, imageUrl, description, null);
   await product.save();
   res.redirect("/");
 };
@@ -67,18 +67,17 @@ const postEditProduct: RequestHandler = async (req, res, _) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
 
-  const updatedProduct = await Product.updateById(prodId, {
-    title: updatedTitle,
-    price: updatedPrice,
-    imageUrl: updatedImageUrl,
-    description: updatedDesc,
-  });
+  const updatedProduct = new Product(updatedTitle, updatedPrice, updatedImageUrl, updatedDesc, prodId);
 
-  if (!updatedProduct) {
-    return res.redirect("/");
+  try {
+    const result = await updatedProduct.save();
+    if (!result) {
+      return res.redirect("/");
+    }
+    res.redirect("/admin/products");
+  } catch (error) {
+    console.log(error);
   }
-
-  res.redirect("/admin/products");
 };
 
 const postDeleteProduct: RequestHandler = async (req, res, _) => {
