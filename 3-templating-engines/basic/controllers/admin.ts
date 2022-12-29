@@ -1,8 +1,8 @@
-import { RequestHandler } from "express";
+import { Request, Response, NextFunction } from "express";
 
 import { Product } from "../models/product";
 
-const getProducts: RequestHandler = async (_, res, __) => {
+const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   try {
     const products = await Product.fetchAll();
     res.render("admin/products", {
@@ -15,7 +15,7 @@ const getProducts: RequestHandler = async (_, res, __) => {
   }
 };
 
-const getAddProduct: RequestHandler = (_, res, __) => {
+const getAddProduct = (_: Request, res: Response, __: NextFunction) => {
   res.render("admin/edit-product", {
     docTitle: "Add Product",
     path: "/admin/add-product",
@@ -23,7 +23,7 @@ const getAddProduct: RequestHandler = (_, res, __) => {
   });
 };
 
-const postAddProduct: RequestHandler = async (req, res, _) => {
+const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
   const title: string = req.body.title;
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;
@@ -34,7 +34,7 @@ const postAddProduct: RequestHandler = async (req, res, _) => {
   res.redirect("/");
 };
 
-const getEditProduct: RequestHandler = async (req, res, _) => {
+const getEditProduct = async (req: Request, res: Response, _: NextFunction) => {
   const editMode = req.query.edit;
 
   if (!editMode) {
@@ -60,7 +60,7 @@ const getEditProduct: RequestHandler = async (req, res, _) => {
   }
 };
 
-const postEditProduct: RequestHandler = async (req, res, _) => {
+const postEditProduct = async (req: Request, res: Response, _: NextFunction) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
@@ -80,7 +80,7 @@ const postEditProduct: RequestHandler = async (req, res, _) => {
   }
 };
 
-const postDeleteProduct: RequestHandler = async (req, res, _) => {
+const postDeleteProduct = async (req: Request, res: Response, _: NextFunction) => {
   const prodId = req.body.productId;
 
   try {

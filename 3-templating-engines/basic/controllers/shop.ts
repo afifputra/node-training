@@ -1,8 +1,8 @@
-import { RequestHandler } from "express";
+import { Request, Response, NextFunction } from "express";
 
 import { Product } from "../models/product";
 
-const getProducts: RequestHandler = async (_, res, __) => {
+const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   try {
     const products = await Product.fetchAll();
     res.render("shop/product-list", {
@@ -15,7 +15,7 @@ const getProducts: RequestHandler = async (_, res, __) => {
   }
 };
 
-const getProduct: RequestHandler = async (req, res, _) => {
+const getProduct = async (req: Request, res: Response, _: NextFunction) => {
   const prodId = req.params.productId;
 
   try {
@@ -46,7 +46,7 @@ const getProduct: RequestHandler = async (req, res, _) => {
   //   .catch((error: Error) => console.log(error));
 };
 
-const getIndex: RequestHandler = async (_, res, __) => {
+const getIndex = async (_: Request, res: Response, __: NextFunction) => {
   try {
     const products = await Product.fetchAll();
     res.render("shop/index", {
