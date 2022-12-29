@@ -13,7 +13,7 @@ import shopRoutes from "./routes/shop";
 
 declare module "express-serve-static-core" {
   interface Request {
-    user?: { _id: string; name: string; email: string };
+    user?: User;
   }
 }
 
@@ -36,9 +36,8 @@ app.use((req, __, next) => {
 
   (async () => {
     try {
-      const user = await User.findById("63acff144e363d38e6afbc69");
-      console.log(user);
-      Object.assign(req, { user: user });
+      const user = await User.findById("63acff144e363d38e6afbc69")!;
+      Object.assign(req, { user: new User(user!.name, user!.email, user!.cart, user!._id) });
       next();
     } catch (error) {
       console.log(error);
