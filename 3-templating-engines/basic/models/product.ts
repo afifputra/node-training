@@ -7,10 +7,11 @@ interface ProductInterface {
   price: number;
   imageUrl: string;
   description: string;
+  userId: string;
 }
 
 class Product implements ProductInterface {
-  constructor(public title: string, public price: number, public imageUrl: string, public description: string, public id: string | ObjectId | null) {
+  constructor(public title: string, public price: number, public imageUrl: string, public description: string, public id: string | ObjectId | null, public userId: string) {
     this.id = id ? new ObjectId(id) : null;
   }
 
@@ -18,11 +19,28 @@ class Product implements ProductInterface {
     const db = getDb();
     try {
       if (this.id) {
-        const result = await db.collection("products").updateOne({ _id: this.id }, { $set: this });
+        const result = await db.collection("products").updateOne(
+          { _id: this.id },
+          {
+            $set: {
+              title: this.title,
+              price: this.price,
+              imageUrl: this.imageUrl,
+              description: this.description,
+              userId: this.userId,
+            },
+          }
+        );
         console.log(result);
         return result;
       } else {
-        const result = await db.collection("products").insertOne(this);
+        const result = await db.collection("products").insertOne({
+          title: this.title,
+          price: this.price,
+          imageUrl: this.imageUrl,
+          description: this.description,
+          userId: this.userId,
+        });
         console.log(result);
         return result;
       }

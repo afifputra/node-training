@@ -13,7 +13,7 @@ import shopRoutes from "./routes/shop";
 
 declare module "express-serve-static-core" {
   interface Request {
-    user?: { id: string; name: string; email: string };
+    user?: { _id: string; name: string; email: string };
   }
 }
 
