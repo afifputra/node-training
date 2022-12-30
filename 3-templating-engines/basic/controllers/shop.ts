@@ -34,17 +34,6 @@ const getProduct = async (req: Request, res: Response, _: NextFunction) => {
   } catch (error) {
     console.log(error);
   }
-
-  // Product.findByPk(prodId)
-  //   .then((result: unknown) => {
-  //     const product: Product = result as Product;
-  //     res.render("shop/product-detail", {
-  //       product: product,
-  //       docTitle: product.title,
-  //       path: "/products",
-  //     });
-  //   })
-  //   .catch((error: Error) => console.log(error));
 };
 
 const getIndex = async (_: Request, res: Response, __: NextFunction) => {
@@ -127,40 +116,16 @@ const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunctio
 //     .catch((error: Error) => console.log(error));
 // };
 
-// const postOrder = (req: any, res: Response, next: NextFunction) => {
-//   let fetchedCart: any;
-//   req.user
-//     .getCart()
-//     .then((cart: any) => {
-//       fetchedCart = cart;
-//       return cart.getProducts();
-//     })
-//     .then((products: Product[]) => {
-//       req.user
-//         .createOrder()
-//         .then((order: any) => {
-//           return order.addProducts(
-//             products.map((product: any) => {
-//               product.orderItem = { quantity: product.cartItem.quantity };
-//               return product;
-//             })
-//           );
-//         })
-//         .catch((error: Error) => console.log(error));
-//     })
-//     .then((result: any) => {
-//       return req.user.getCart().then((cart: any) => {
-//         return cart.setProducts(null);
-//       });
-//     })
-//     .then((result: any) => {
-//       return fetchedCart.setProducts(null);
-//     })
-//     .then(() => {
-//       res.redirect("/orders");
-//     })
-//     .catch((error: Error) => console.log(error));
-// };
+const postOrder = async (req: Request, res: Response, _: NextFunction) => {
+  const user = req.user;
+
+  try {
+    await user!.addOrder();
+    res.redirect("/orders");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // const getCheckout = (req: Request, res: Response, next: NextFunction) => {
 //   res.render("shop/checkout", {
@@ -177,6 +142,6 @@ export default {
   postCart,
   postCartDeleteProduct,
   // getOrders,
-  // postOrder,
+  postOrder,
   // getCheckout,
 };

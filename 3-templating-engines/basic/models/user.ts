@@ -98,6 +98,29 @@ class User implements UserInterface {
     return db.collection("users").updateOne({ _id: new ObjectId(this._id) }, { $set: { cart: updatedCart } });
   }
 
+  async addOrder() {
+    const db = getDb();
+
+    try {
+      const cart = await this.getCart();
+      const order = {
+        items: cart,
+        user: {
+          _id: new ObjectId(this._id),
+          name: this.name,
+        },
+      };
+
+      await db.collection("orders").insertOne(order);
+
+      this.cart = { items: [] };
+
+      return db.collection("users").updateOne({ _id: new ObjectId(this._id) }, { $set: { cart: { items: [] } } });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   static async findById(userId: string) {
     const db = getDb();
     try {
