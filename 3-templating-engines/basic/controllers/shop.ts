@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 
 import { Product, ProductInterface } from "../models/product";
+import { ObjectId } from "mongodb";
 
 const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   try {
-    const products = await Product.fetchAll();
+    const products = (await Product.fetchAll()) as ProductInterface[];
     res.render("shop/product-list", {
-      prods: products ? products : [],
+      prods: products,
       docTitle: "All Products",
       path: "/products",
     });
@@ -48,7 +49,7 @@ const getProduct = async (req: Request, res: Response, _: NextFunction) => {
 
 const getIndex = async (_: Request, res: Response, __: NextFunction) => {
   try {
-    const products = await Product.fetchAll();
+    const products = (await Product.fetchAll()) as ProductInterface[];
     res.render("shop/index", {
       prods: products,
       docTitle: "Shop",
@@ -76,19 +77,17 @@ const getCart = async (req: Request, res: Response, _: NextFunction) => {
 
 const postCart = async (req: Request, res: Response, __: NextFunction) => {
   const requestUser = req.user;
-  const productId = req.body.productId;
+  const productId: ObjectId = req.body.productId;
 
   try {
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId.toString());
 
     if (!product) {
       return res.redirect("/");
     }
 
     const finalProduct = product as ProductInterface;
-    const result = await requestUser!.addToCart(finalProduct);
-
-    console.log(result);
+    await requestUser!.addToCart(finalProduct);
 
     res.redirect("/cart");
   } catch (error) {
@@ -97,7 +96,7 @@ const postCart = async (req: Request, res: Response, __: NextFunction) => {
 };
 
 const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunction) => {
-  const productId = req.body.productId;
+  const productId: ObjectId = req.body.productId;
 
   try {
     const result = await req.user!.deleteItemFromCart(productId);

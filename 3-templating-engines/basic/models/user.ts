@@ -89,7 +89,7 @@ class User implements UserInterface {
     }
   }
 
-  deleteItemFromCart(productId: string) {
+  deleteItemFromCart(productId: ObjectId) {
     const db = getDb();
     const updatedCartItems = this.cart!.items.filter((item: Items) => {
       return item.productId.toString() !== productId.toString();
