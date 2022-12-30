@@ -100,21 +100,20 @@ const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunctio
   }
 };
 
-// const getOrders = (req: any, res: Response, next: NextFunction) => {
-//   req.user
-//     .getOrders({
-//       include: ["products"],
-//     })
-//     .then((orders: any) => {
-//       console.log(orders);
-//       res.render("shop/orders", {
-//         docTitle: "Your Orders",
-//         path: "/orders",
-//         orders: orders,
-//       });
-//     })
-//     .catch((error: Error) => console.log(error));
-// };
+const getOrders = async (req: Request, res: Response, _: NextFunction) => {
+  const user = req.user;
+  try {
+    const orders = (await user!.getOrders()) as any;
+
+    res.render("shop/orders", {
+      docTitle: "Your Orders",
+      path: "/orders",
+      orders: orders,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const postOrder = async (req: Request, res: Response, _: NextFunction) => {
   const user = req.user;
@@ -141,7 +140,7 @@ export default {
   getCart,
   postCart,
   postCartDeleteProduct,
-  // getOrders,
+  getOrders,
   postOrder,
   // getCheckout,
 };
