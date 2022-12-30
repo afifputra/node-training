@@ -126,12 +126,12 @@ const postOrder = async (req: Request, res: Response, _: NextFunction) => {
   }
 };
 
-// const getCheckout = (req: Request, res: Response, next: NextFunction) => {
-//   res.render("shop/checkout", {
-//     docTitle: "Checkout",
-//     path: "/checkout",
-//   });
-// };
+const getCheckout = (_: Request, res: Response, __: NextFunction) => {
+  res.render("shop/checkout", {
+    docTitle: "Checkout",
+    path: "/checkout",
+  });
+};
 
 export default {
   getProducts,
@@ -142,5 +142,5 @@ export default {
   postCartDeleteProduct,
   getOrders,
   postOrder,
-  // getCheckout,
+  getCheckout,
 };

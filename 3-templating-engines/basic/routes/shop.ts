@@ -29,6 +29,6 @@ router.get("/orders", shopController.getOrders);
 router.post("/create-order", shopController.postOrder);
 
 // GET => /checkout
-// router.get("/checkout", shopController.getCheckout);
+router.get("/checkout", shopController.getCheckout);
 
 export default router;
