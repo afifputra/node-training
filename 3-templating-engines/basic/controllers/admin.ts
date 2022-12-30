@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 import { Product } from "../models/product";
+import { ObjectID } from "bson";
 
 const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   try {
@@ -28,9 +29,9 @@ const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;
   const description: string = req.body.description;
-  const userId: string = req.user!._id;
+  const userId: string | ObjectID | undefined = req.user!._id ? req.user!._id : "";
 
-  const product = new Product(title, price, imageUrl, description, null, userId);
+  const product = new Product(title, price, imageUrl, description, null, userId.toString());
   await product.save();
   res.redirect("/");
 };
@@ -67,9 +68,9 @@ const postEditProduct = async (req: Request, res: Response, _: NextFunction) => 
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  const userId = req.user!._id;
+  const userId: string | ObjectID | undefined = req.user!._id ? req.user!._id : "";
 
-  const updatedProduct = new Product(updatedTitle, updatedPrice, updatedImageUrl, updatedDesc, prodId, userId);
+  const updatedProduct = new Product(updatedTitle, updatedPrice, updatedImageUrl, updatedDesc, prodId, userId.toString());
 
   try {
     const result = await updatedProduct.save();

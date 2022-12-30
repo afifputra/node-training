@@ -105,7 +105,7 @@ class User implements UserInterface {
         .collection("orders")
         .find({ "user._id": new ObjectId(this._id) })
         .toArray();
-      console.log(orders);
+
       return orders;
     } catch (error) {
       console.log(error);
