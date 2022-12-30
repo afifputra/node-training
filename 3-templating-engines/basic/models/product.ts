@@ -7,39 +7,29 @@ interface ProductInterface {
   price: number;
   imageUrl: string;
   description: string;
-  userId: string;
+  userId: ObjectId;
 }
 
 class Product implements ProductInterface {
-  constructor(public title: string, public price: number, public imageUrl: string, public description: string, public _id: string | ObjectId | null, public userId: string) {
+  constructor(public title: string, public price: number, public imageUrl: string, public description: string, public _id: string | ObjectId | null, public userId: ObjectId) {
+    this.price = +price;
     this._id = _id ? new ObjectId(_id) : null;
   }
 
   async save() {
     const db = getDb();
+    const { _id: idProduct, ...dataProduct } = this;
     try {
-      if (this._id) {
+      if (idProduct) {
         const result = await db.collection("products").updateOne(
-          { _id: this._id },
+          { _id: idProduct },
           {
-            $set: {
-              title: this.title,
-              price: this.price,
-              imageUrl: this.imageUrl,
-              description: this.description,
-              userId: this.userId,
-            },
+            $set: dataProduct,
           }
         );
         return result;
       } else {
-        const result = await db.collection("products").insertOne({
-          title: this.title,
-          price: this.price,
-          imageUrl: this.imageUrl,
-          description: this.description,
-          userId: this.userId,
-        });
+        const result = await db.collection("products").insertOne(dataProduct);
         return result;
       }
     } catch (error) {

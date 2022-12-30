@@ -77,8 +77,9 @@ class User implements UserInterface {
         .toArray()) as ProductInterface[];
 
       return products.map((product: ProductInterface) => {
+        const { userId, ...rest } = product;
         return {
-          ...product,
+          ...rest,
           quantity: cart.items.find((item: Items) => {
             return item.productId.toString() === product._id!.toString();
           })!.quantity,

@@ -29,9 +29,9 @@ const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;
   const description: string = req.body.description;
-  const userId: string | ObjectID | undefined = req.user!._id ? req.user!._id : "";
+  const userId: ObjectID = new ObjectID(req.user!._id);
 
-  const product = new Product(title, price, imageUrl, description, null, userId.toString());
+  const product = new Product(title, price, imageUrl, description, null, userId);
   await product.save();
   res.redirect("/");
 };
@@ -68,9 +68,9 @@ const postEditProduct = async (req: Request, res: Response, _: NextFunction) => 
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  const userId: string | ObjectID | undefined = req.user!._id ? req.user!._id : "";
+  const userId: ObjectID = new ObjectID(req.user!._id);
 
-  const updatedProduct = new Product(updatedTitle, updatedPrice, updatedImageUrl, updatedDesc, prodId, userId.toString());
+  const updatedProduct = new Product(updatedTitle, updatedPrice, updatedImageUrl, updatedDesc, prodId, userId);
 
   try {
     const result = await updatedProduct.save();
