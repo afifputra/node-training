@@ -76,6 +76,8 @@ class User implements UserInterface {
         .find({ _id: { $in: productIds } })
         .toArray()) as ProductInterface[];
 
+      if (!products) return [];
+
       return products.map((product: ProductInterface) => {
         const { userId, ...rest } = product;
         return {
