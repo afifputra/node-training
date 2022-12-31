@@ -1,97 +1,75 @@
-import { ObjectId } from "mongodb";
-import { getDb } from "../utils/database";
+// import { ObjectId } from "mongodb";
+// import { getDb } from "../utils/database";
 
-interface ProductInterface {
-  _id?: string | ObjectId | null;
-  title: string;
-  price: number;
-  imageUrl: string;
-  description: string;
-  userId: ObjectId;
-}
+// interface ProductInterface {
+//   _id?: string | ObjectId | null;
+//   title: string;
+//   price: number;
+//   imageUrl: string;
+//   description: string;
+//   userId: ObjectId;
+// }
 
-class Product implements ProductInterface {
-  constructor(public title: string, public price: number, public imageUrl: string, public description: string, public _id: string | ObjectId | null, public userId: ObjectId) {
-    this.price = +price;
-    this._id = _id ? new ObjectId(_id) : null;
-  }
+// class Product implements ProductInterface {
+//   constructor(public title: string, public price: number, public imageUrl: string, public description: string, public _id: string | ObjectId | null, public userId: ObjectId) {
+//     this.price = +price;
+//     this._id = _id ? new ObjectId(_id) : null;
+//   }
 
-  async save() {
-    const db = getDb();
-    const { _id: idProduct, ...dataProduct } = this;
-    try {
-      if (idProduct) {
-        const result = await db.collection("products").updateOne(
-          { _id: idProduct },
-          {
-            $set: dataProduct,
-          }
-        );
-        return result;
-      } else {
-        const result = await db.collection("products").insertOne(dataProduct);
-        return result;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+//   async save() {
+//     const db = getDb();
+//     const { _id: idProduct, ...dataProduct } = this;
+//     try {
+//       if (idProduct) {
+//         const result = await db.collection("products").updateOne(
+//           { _id: idProduct },
+//           {
+//             $set: dataProduct,
+//           }
+//         );
+//         return result;
+//       } else {
+//         const result = await db.collection("products").insertOne(dataProduct);
+//         return result;
+//       }
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
 
-  static async fetchAll() {
-    const db = getDb();
-    try {
-      const products = await db.collection("products").find().toArray();
-      return products;
-    } catch (error) {
-      console.log(error);
-    }
-  }
+//   static async fetchAll() {
+//     const db = getDb();
+//     try {
+//       const products = await db.collection("products").find().toArray();
+//       return products;
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
 
-  static async findById(id: string) {
-    const db = getDb();
-    try {
-      // const product = await db.collection("products").findOne({ _id: new ObjectId(id) });
-      const product = await db
-        .collection("products")
-        .find({ _id: new ObjectId(id) })
-        .next();
-      return product;
-    } catch (error) {
-      console.log(error);
-    }
-  }
+//   static async findById(id: string) {
+//     const db = getDb();
+//     try {
+//       // const product = await db.collection("products").findOne({ _id: new ObjectId(id) });
+//       const product = await db
+//         .collection("products")
+//         .find({ _id: new ObjectId(id) })
+//         .next();
+//       return product;
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
 
-  static async deleteById(id: string) {
-    const db = getDb();
-    try {
-      const result = await db.collection("products").deleteOne({ _id: new ObjectId(id) });
-      return result;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-}
+//   static async deleteById(id: string) {
+//     const db = getDb();
+//     try {
+//       const result = await db.collection("products").deleteOne({ _id: new ObjectId(id) });
+//       return result;
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// }
 
-// const Product = sequelize.define("product", {
-//   id: {
-//     type: Sequelize.INTEGER,
-//     autoIncrement: true,
-//     allowNull: false,
-//     primaryKey: true,
-//   },
-//   title: Sequelize.STRING,
-//   price: {
-//     type: Sequelize.DOUBLE,
-//     allowNull: false,
-//   },
-//   imageUrl: {
-//     type: Sequelize.STRING,
-//     allowNull: false,
-//   },
-//   description: {
-//     type: Sequelize.STRING,
-//     allowNull: false,
-//   },
-// });
-
-export { Product, ProductInterface };
+// export { Product, ProductInterface };

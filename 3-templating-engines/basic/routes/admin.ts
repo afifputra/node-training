@@ -1,25 +1,25 @@
 import { Router } from "express";
 
-import adminController from "../controllers/admin";
+// import adminController from "../controllers/admin";
 
 const router = Router();
 
 // GET => /admin/add-product
-router.get("/add-product", adminController.getAddProduct);
+// router.get("/add-product", adminController.getAddProduct);
 
 // POST => /admin/add-product
-router.post("/add-product", adminController.postAddProduct);
+// router.post("/add-product", adminController.postAddProduct);
 
 // GET => /admin/products
-router.get("/products", adminController.getProducts);
+// router.get("/products", adminController.getProducts);
 
 // GET => /admin/edit-product/:productId
-router.get("/edit-product/:productId", adminController.getEditProduct);
+// router.get("/edit-product/:productId", adminController.getEditProduct);
 
 // POST => /admin/edit-product
-router.post("/edit-product", adminController.postEditProduct);
+// router.post("/edit-product", adminController.postEditProduct);
 
 // POST => /admin/delete-product
-router.post("/delete-product", adminController.postDeleteProduct);
+// router.post("/delete-product", adminController.postDeleteProduct);
 
 export default router;
