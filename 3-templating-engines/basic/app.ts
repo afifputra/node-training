@@ -25,24 +25,24 @@ app.set("views", "views");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootDir, "../", "public")));
 
-app.use((_, __, ___) => {
-  // User.findByPk(1)
-  //   .then((result: unknown) => {
-  //     const user = result as { id: string; name: string; email: string };
-  //     Object.assign(req, { user: user });
-  //     next();
-  //   })
-  //   .catch((error: Error) => console.log(error));
-  // (async () => {
-  //   try {
-  //     const user = await User.findById("63acff144e363d38e6afbc69")!;
-  //     Object.assign(req, { user: new User(user!.name, user!.email, user!.cart, user!._id) });
-  //     next();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // })();
-});
+// app.use((_, __, ___) => {
+// User.findByPk(1)
+//   .then((result: unknown) => {
+//     const user = result as { id: string; name: string; email: string };
+//     Object.assign(req, { user: user });
+//     next();
+//   })
+//   .catch((error: Error) => console.log(error));
+// (async () => {
+//   try {
+//     const user = await User.findById("63acff144e363d38e6afbc69")!;
+//     Object.assign(req, { user: new User(user!.name, user!.email, user!.cart, user!._id) });
+//     next();
+//   } catch (error) {
+//     console.log(error);
+//   }
+// })();
+// });
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
@@ -53,7 +53,7 @@ set("strictQuery", true);
 connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/shop?retryWrites=true&w=majority")
   .then(() => {
     console.log("Connected to database");
-    app.listen(3000);
+    app.listen(3001);
   })
   .catch((error) => {
     console.log(error);

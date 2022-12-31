@@ -1,6 +1,6 @@
-// import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
-// import { Product } from "../models/product";
+import Product from "../models/product";
 // import { ObjectID } from "bson";
 
 // const getProducts = async (_: Request, res: Response, __: NextFunction) => {
@@ -16,25 +16,29 @@
 //   }
 // };
 
-// const getAddProduct = (_: Request, res: Response, __: NextFunction) => {
-//   res.render("admin/edit-product", {
-//     docTitle: "Add Product",
-//     path: "/admin/add-product",
-//     editing: false,
-//   });
-// };
+const getAddProduct = (_: Request, res: Response, __: NextFunction) => {
+  res.render("admin/edit-product", {
+    docTitle: "Add Product",
+    path: "/admin/add-product",
+    editing: false,
+  });
+};
 
-// const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
-//   const title: string = req.body.title;
-//   const imageUrl: string = req.body.imageUrl;
-//   const price: number = req.body.price;
-//   const description: string = req.body.description;
-//   const userId: ObjectID = new ObjectID(req.user!._id);
+const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
+  const title: string = req.body.title;
+  const imageUrl: string = req.body.imageUrl;
+  const price: number = req.body.price;
+  const description: string = req.body.description;
 
-//   const product = new Product(title, price, imageUrl, description, null, userId);
-//   await product.save();
-//   res.redirect("/");
-// };
+  const product = new Product({
+    title,
+    imageUrl,
+    price,
+    description,
+  });
+  await product.save();
+  res.redirect("/");
+};
 
 // const getEditProduct = async (req: Request, res: Response, _: NextFunction) => {
 //   const editMode = req.query.edit;
@@ -99,11 +103,11 @@
 //   }
 // };
 
-// export default {
-//   getProducts,
-//   getAddProduct,
-//   postAddProduct,
-//   getEditProduct,
-//   postEditProduct,
-//   postDeleteProduct,
-// };
+export default {
+  //   getProducts,
+  getAddProduct,
+  postAddProduct,
+  //   getEditProduct,
+  //   postEditProduct,
+  //   postDeleteProduct,
+};

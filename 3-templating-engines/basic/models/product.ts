@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const productSchema = new Schema({
   title: {
@@ -19,7 +19,7 @@ const productSchema = new Schema({
   },
 });
 
-export default productSchema;
+export default model("Product", productSchema);
 
 // import { ObjectId } from "mongodb";
 // import { getDb } from "../utils/database";
