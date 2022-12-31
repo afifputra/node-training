@@ -50,11 +50,14 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 set("strictQuery", true);
-connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/shop?retryWrites=true&w=majority")
-  .then(() => {
-    console.log("Connected to database");
+
+(async () => {
+  try {
+    await connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/shop?retryWrites=true&w=majority");
     app.listen(3001);
-  })
-  .catch((error) => {
+
+    console.log("Connected to database");
+  } catch (error) {
     console.log(error);
-  });
+  }
+})();
