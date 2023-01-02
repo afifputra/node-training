@@ -65,6 +65,7 @@ userSchema.methods.deleteItemFromCart = function (productId: string) {
   const updatedCartItems: Items = this.cart!.items.filter((item: Items) => {
     return item.productId.toString() !== productId.toString();
   });
+  console.log(updatedCartItems);
   this.cart = { items: updatedCartItems };
   return this.save();
 };
