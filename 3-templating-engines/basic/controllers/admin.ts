@@ -3,18 +3,18 @@ import { Request, Response, NextFunction } from "express";
 import Product from "../models/product";
 // import { ObjectID } from "bson";
 
-// const getProducts = async (_: Request, res: Response, __: NextFunction) => {
-//   try {
-//     const products = await Product.fetchAll();
-//     res.render("admin/products", {
-//       prods: products ? products : [],
-//       docTitle: "Admin Products",
-//       path: "/admin/products",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+const getProducts = async (_: Request, res: Response, __: NextFunction) => {
+  try {
+    const products = await Product.find();
+    res.render("admin/products", {
+      prods: products ? products : [],
+      docTitle: "Admin Products",
+      path: "/admin/products",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const getAddProduct = (_: Request, res: Response, __: NextFunction) => {
   res.render("admin/edit-product", {
@@ -40,74 +40,83 @@ const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
   res.redirect("/");
 };
 
-// const getEditProduct = async (req: Request, res: Response, _: NextFunction) => {
-//   const editMode = req.query.edit;
+const getEditProduct = async (req: Request, res: Response, _: NextFunction) => {
+  const editMode = req.query.edit;
 
-//   if (!editMode) {
-//     return res.redirect("/");
-//   }
+  if (!editMode) {
+    return res.redirect("/");
+  }
 
-//   const prodId = req.params.productId;
-//   try {
-//     const product = await Product.findById(prodId);
+  const prodId = req.params.productId;
+  try {
+    const product = await Product.findById(prodId);
 
-//     if (!product) {
-//       return res.redirect("/");
-//     }
+    if (!product) {
+      return res.redirect("/");
+    }
 
-//     res.render("admin/edit-product", {
-//       docTitle: "Edit Product",
-//       path: "/admin/edit-product",
-//       editing: editMode,
-//       product: product,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+    res.render("admin/edit-product", {
+      docTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: editMode,
+      product: product,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-// const postEditProduct = async (req: Request, res: Response, _: NextFunction) => {
-//   const prodId = req.body.productId;
-//   const updatedTitle = req.body.title;
-//   const updatedPrice = req.body.price;
-//   const updatedImageUrl = req.body.imageUrl;
-//   const updatedDesc = req.body.description;
-//   const userId: ObjectID = new ObjectID(req.user!._id);
+const postEditProduct = async (req: Request, res: Response, _: NextFunction) => {
+  const prodId: string = req.body.productId;
+  const updatedTitle: string = req.body.title;
+  const updatedPrice: number = +req.body.price;
+  const updatedImageUrl: string = req.body.imageUrl;
+  const updatedDesc: string = req.body.description;
+  // const userId: ObjectID = new ObjectID(req.user!._id);
 
-//   const updatedProduct = new Product(updatedTitle, updatedPrice, updatedImageUrl, updatedDesc, prodId, userId);
+  try {
+    const result = await Product.findByIdAndUpdate(
+      prodId,
+      {
+        title: updatedTitle,
+        price: updatedPrice,
+        imageUrl: updatedImageUrl,
+        description: updatedDesc,
+      },
+      { new: true }
+    );
 
-//   try {
-//     const result = await updatedProduct.save();
-//     if (!result) {
-//       return res.redirect("/");
-//     }
-//     res.redirect("/admin/products");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+    if (!result) {
+      return res.redirect("/");
+    }
 
-// const postDeleteProduct = async (req: Request, res: Response, _: NextFunction) => {
-//   const prodId = req.body.productId;
+    res.redirect("/admin/products");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-//   try {
-//     const deletedProduct = await Product.deleteById(prodId);
+const postDeleteProduct = async (req: Request, res: Response, _: NextFunction) => {
+  const prodId: string = req.body.productId;
 
-//     if (!deletedProduct) {
-//       return res.redirect("/");
-//     }
-//     console.log("DESTROYED PRODUCT");
-//     res.redirect("/admin/products");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+  try {
+    const deletedProduct = await Product.findByIdAndRemove(prodId);
+
+    if (!deletedProduct) {
+      return res.redirect("/");
+    }
+    console.log("DESTROYED PRODUCT");
+    res.redirect("/admin/products");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export default {
-  //   getProducts,
+  getProducts,
   getAddProduct,
   postAddProduct,
-  //   getEditProduct,
-  //   postEditProduct,
-  //   postDeleteProduct,
+  getEditProduct,
+  postEditProduct,
+  postDeleteProduct,
 };
