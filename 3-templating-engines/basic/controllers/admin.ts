@@ -100,11 +100,7 @@ const postDeleteProduct = async (req: Request, res: Response, _: NextFunction) =
   const prodId: string = req.body.productId;
 
   try {
-    const deletedProduct = await Product.findByIdAndRemove(prodId);
-
-    if (!deletedProduct) {
-      return res.redirect("/");
-    }
+    await Product.findByIdAndRemove(prodId);
     console.log("DESTROYED PRODUCT");
     res.redirect("/admin/products");
   } catch (error) {
