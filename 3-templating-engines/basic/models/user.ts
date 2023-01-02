@@ -1,5 +1,18 @@
 import { Schema, model } from "mongoose";
 
+interface Items {
+  productId: Schema.Types.ObjectId;
+  quantity: number;
+}
+export interface UserInterface {
+  _id?: Schema.Types.ObjectId;
+  name: string;
+  email: string;
+  cart?: {
+    items: Items[];
+  };
+}
+
 const userSchema = new Schema({
   name: {
     type: String,

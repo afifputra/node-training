@@ -29,12 +29,14 @@ const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;
   const description: string = req.body.description;
+  const userId = req.user?._id;
 
   const product = new Product({
     title,
     imageUrl,
     price,
     description,
+    userId,
   });
   await product.save();
   res.redirect("/");
