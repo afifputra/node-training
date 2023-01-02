@@ -14,6 +14,7 @@ export interface UserInterface extends Document {
   };
   addToCart: (product: ProductInterface) => Promise<void>;
   deleteItemFromCart: (productId: string) => Promise<void>;
+  clearCart: () => Promise<void>;
 }
 
 const userSchema = new Schema({

@@ -97,20 +97,30 @@ const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunctio
   }
 };
 
-const getOrders = async (__: Request, res: Response, _: NextFunction) => {
-  res.redirect("/orders");
-  // const user = req.user;
-  // try {
-  //   const orders = await user!.getOrders();
-
-  //   res.render("shop/orders", {
-  //     docTitle: "Your Orders",
-  //     path: "/orders",
-  //     orders: orders,
-  //   });
-  // } catch (error) {
-  //   console.log(error);
-  // }
+const getOrders = async (req: Request, res: Response, _: NextFunction) => {
+  const requestUser = req.user;
+  try {
+    const orders = await Order.find({ "user.userId": requestUser?._id });
+    const finalOrders = orders.map((order) => {
+      return {
+        ...order._doc,
+        products: order.products.map((product) => {
+          return {
+            ...product.product,
+            quantity: product.quantity,
+          };
+        }),
+      };
+    });
+    console.log(finalOrders);
+    res.render("shop/orders", {
+      docTitle: "Your Orders",
+      path: "/orders",
+      orders: finalOrders,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const postOrder = async (req: Request, res: Response, _: NextFunction) => {
@@ -131,6 +141,7 @@ const postOrder = async (req: Request, res: Response, _: NextFunction) => {
     });
 
     await order.save();
+    await requestUser.clearCart();
 
     res.redirect("/orders");
   } catch (error) {
