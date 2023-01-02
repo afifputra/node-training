@@ -70,6 +70,11 @@ userSchema.methods.deleteItemFromCart = function (productId: string) {
   return this.save();
 };
 
+userSchema.methods.clearCart = function () {
+  this.cart = { items: [] };
+  return this.save();
+};
+
 export default model("User", userSchema);
 
 // import { ObjectId } from "mongodb";

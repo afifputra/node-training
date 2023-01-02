@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 import Product, { ProductInterface } from "../models/product";
+import Order from "../models/order";
 // import { ObjectId } from "mongodb";
 
 const getProducts = async (_: Request, res: Response, __: NextFunction) => {
@@ -96,31 +97,46 @@ const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunctio
   }
 };
 
-// const getOrders = async (req: Request, res: Response, _: NextFunction) => {
-//   const user = req.user;
-//   try {
-//     const orders = (await user!.getOrders()) as any;
+const getOrders = async (__: Request, res: Response, _: NextFunction) => {
+  res.redirect("/orders");
+  // const user = req.user;
+  // try {
+  //   const orders = await user!.getOrders();
 
-//     res.render("shop/orders", {
-//       docTitle: "Your Orders",
-//       path: "/orders",
-//       orders: orders,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+  //   res.render("shop/orders", {
+  //     docTitle: "Your Orders",
+  //     path: "/orders",
+  //     orders: orders,
+  //   });
+  // } catch (error) {
+  //   console.log(error);
+  // }
+};
 
-// const postOrder = async (req: Request, res: Response, _: NextFunction) => {
-//   const user = req.user;
+const postOrder = async (req: Request, res: Response, _: NextFunction) => {
+  const requestUser = req.user!;
 
-//   try {
-//     await user!.addOrder();
-//     res.redirect("/orders");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+  try {
+    const getCart = await requestUser.populate("cart.items.productId");
+    const products = getCart.cart?.items.map((i: any) => {
+      return { quantity: i.quantity, product: { ...i.productId._doc } };
+    });
+
+    const order = new Order({
+      user: {
+        name: requestUser.name,
+        userId: requestUser,
+      },
+      products: products,
+    });
+
+    await order.save();
+
+    res.redirect("/orders");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // const getCheckout = (_: Request, res: Response, __: NextFunction) => {
 //   res.render("shop/checkout", {
@@ -136,7 +152,7 @@ export default {
   getCart,
   postCart,
   postCartDeleteProduct,
-  //   getOrders,
-  //   postOrder,
+  getOrders,
+  postOrder,
   //   getCheckout,
 };
