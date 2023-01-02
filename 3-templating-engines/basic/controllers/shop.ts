@@ -53,8 +53,9 @@ const getCart = async (req: Request, res: Response, _: NextFunction) => {
   const requestUser = req.user!;
 
   try {
-    const cart = await requestUser.getCart();
-    console.log(cart);
+    const getCart = await requestUser.populate("cart.items.productId");
+    const cart = getCart.cart?.items || [];
+
     res.render("shop/cart", {
       docTitle: "Your Cart",
       path: "/cart",

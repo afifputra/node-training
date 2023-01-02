@@ -1,11 +1,11 @@
-import { Schema, model } from "mongoose";
-import Product, { ProductInterface } from "./product";
+import { Document, Schema, model } from "mongoose";
+import { ProductInterface } from "./product";
 
 interface Items {
   productId: Schema.Types.ObjectId;
   quantity: number;
 }
-export interface UserInterface {
+export interface UserInterface extends Document {
   _id?: Schema.Types.ObjectId;
   name: string;
   email: string;
@@ -13,7 +13,6 @@ export interface UserInterface {
     items: Items[];
   };
   addToCart: (product: ProductInterface) => Promise<void>;
-  getCart: () => Promise<ProductInterface[]>;
   deleteItemFromCart: (productId: string) => Promise<void>;
 }
 
@@ -60,25 +59,6 @@ userSchema.methods.addToCart = function (product: ProductInterface) {
   const updatedCart = { items: updatedCartItems };
   this.cart = updatedCart;
   return this.save();
-};
-
-userSchema.methods.getCart = async function () {
-  const cart = this.cart!;
-
-  const productIds = cart.items.map((items: Items) => {
-    return items.productId;
-  });
-
-  const products = (await Product.find({ _id: { $in: productIds } }).lean()) as ProductInterface[];
-
-  return products.map((product: ProductInterface) => {
-    return {
-      ...product,
-      quantity: cart.items.find((item: Items) => {
-        return item.productId.toString() === product._id!.toString();
-      })!.quantity,
-    };
-  });
 };
 
 userSchema.methods.deleteItemFromCart = function (productId: string) {
