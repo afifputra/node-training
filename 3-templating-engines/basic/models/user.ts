@@ -14,6 +14,7 @@ export interface UserInterface {
   };
   addToCart: (product: ProductInterface) => Promise<void>;
   getCart: () => Promise<ProductInterface[]>;
+  deleteItemFromCart: (productId: string) => Promise<void>;
 }
 
 const userSchema = new Schema({
@@ -78,6 +79,14 @@ userSchema.methods.getCart = async function () {
       })!.quantity,
     };
   });
+};
+
+userSchema.methods.deleteItemFromCart = function (productId: string) {
+  const updatedCartItems: Items = this.cart!.items.filter((item: Items) => {
+    return item.productId.toString() !== productId.toString();
+  });
+  this.cart = { items: updatedCartItems };
+  return this.save();
 };
 
 export default model("User", userSchema);

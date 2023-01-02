@@ -84,21 +84,16 @@ const postCart = async (req: Request, res: Response, __: NextFunction) => {
   }
 };
 
-// const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunction) => {
-//   const productId: ObjectId = req.body.productId;
+const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunction) => {
+  const productId: string = req.body.productId;
 
-//   try {
-//     const result = await req.user!.deleteItemFromCart(productId);
-
-//     if (!result) {
-//       return res.redirect("/");
-//     }
-
-//     res.redirect("/cart");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+  try {
+    await req.user!.deleteItemFromCart(productId);
+    res.redirect("/cart");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // const getOrders = async (req: Request, res: Response, _: NextFunction) => {
 //   const user = req.user;
@@ -139,7 +134,7 @@ export default {
   getIndex,
   getCart,
   postCart,
-  //   postCartDeleteProduct,
+  postCartDeleteProduct,
   //   getOrders,
   //   postOrder,
   //   getCheckout,
