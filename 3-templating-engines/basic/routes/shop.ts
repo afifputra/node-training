@@ -1,14 +1,14 @@
 import { Router } from "express";
 
-// import shopController from "../controllers/shop";
+import shopController from "../controllers/shop";
 
 const router = Router();
 
 // GET => /
-// router.get("/", shopController.getIndex);
+router.get("/", shopController.getIndex);
 
 // GET => /products
-// router.get("/products", shopController.getProducts);
+router.get("/products", shopController.getProducts);
 
 // GET => /products/:productId
 // router.get("/products/:productId", shopController.getProduct);

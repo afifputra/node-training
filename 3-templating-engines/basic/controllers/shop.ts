@@ -1,20 +1,20 @@
-// import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
-// import { Product, ProductInterface } from "../models/product";
+import Product from "../models/product";
 // import { ObjectId } from "mongodb";
 
-// const getProducts = async (_: Request, res: Response, __: NextFunction) => {
-//   try {
-//     const products = (await Product.fetchAll()) as ProductInterface[];
-//     res.render("shop/product-list", {
-//       prods: products,
-//       docTitle: "All Products",
-//       path: "/products",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+const getProducts = async (_: Request, res: Response, __: NextFunction) => {
+  try {
+    const products = await Product.find();
+    res.render("shop/product-list", {
+      prods: products,
+      docTitle: "All Products",
+      path: "/products",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // const getProduct = async (req: Request, res: Response, _: NextFunction) => {
 //   const prodId = req.params.productId;
@@ -36,18 +36,18 @@
 //   }
 // };
 
-// const getIndex = async (_: Request, res: Response, __: NextFunction) => {
-//   try {
-//     const products = (await Product.fetchAll()) as ProductInterface[];
-//     res.render("shop/index", {
-//       prods: products,
-//       docTitle: "Shop",
-//       path: "/",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+const getIndex = async (_: Request, res: Response, __: NextFunction) => {
+  try {
+    const products = await Product.find();
+    res.render("shop/index", {
+      prods: products,
+      docTitle: "Shop",
+      path: "/",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // const getCart = async (req: Request, res: Response, _: NextFunction) => {
 //   const requestUser = req.user;
@@ -133,14 +133,14 @@
 //   });
 // };
 
-// export default {
-//   getProducts,
-//   getProduct,
-//   getIndex,
-//   getCart,
-//   postCart,
-//   postCartDeleteProduct,
-//   getOrders,
-//   postOrder,
-//   getCheckout,
-// };
+export default {
+  getProducts,
+  //   getProduct,
+  getIndex,
+  //   getCart,
+  //   postCart,
+  //   postCartDeleteProduct,
+  //   getOrders,
+  //   postOrder,
+  //   getCheckout,
+};
