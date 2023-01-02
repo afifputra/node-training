@@ -49,20 +49,21 @@ const getIndex = async (_: Request, res: Response, __: NextFunction) => {
   }
 };
 
-// const getCart = async (req: Request, res: Response, _: NextFunction) => {
-//   const requestUser = req.user;
+const getCart = async (req: Request, res: Response, _: NextFunction) => {
+  const requestUser = req.user!;
 
-//   try {
-//     const cart = await requestUser!.getCart();
-//     res.render("shop/cart", {
-//       docTitle: "Your Cart",
-//       path: "/cart",
-//       products: cart,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+  try {
+    const cart = await requestUser.getCart();
+    console.log(cart);
+    res.render("shop/cart", {
+      docTitle: "Your Cart",
+      path: "/cart",
+      products: cart,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const postCart = async (req: Request, res: Response, __: NextFunction) => {
   const requestUser = req.user;
@@ -136,7 +137,7 @@ export default {
   getProducts,
   getProduct,
   getIndex,
-  //   getCart,
+  getCart,
   postCart,
   //   postCartDeleteProduct,
   //   getOrders,

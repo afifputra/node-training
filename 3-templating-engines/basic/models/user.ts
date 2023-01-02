@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { ProductInterface } from "./product";
+import Product, { ProductInterface } from "./product";
 
 interface Items {
   productId: Schema.Types.ObjectId;
@@ -13,6 +13,7 @@ export interface UserInterface {
     items: Items[];
   };
   addToCart: (product: ProductInterface) => Promise<void>;
+  getCart: () => Promise<ProductInterface[]>;
 }
 
 const userSchema = new Schema({
@@ -58,6 +59,25 @@ userSchema.methods.addToCart = function (product: ProductInterface) {
   const updatedCart = { items: updatedCartItems };
   this.cart = updatedCart;
   return this.save();
+};
+
+userSchema.methods.getCart = async function () {
+  const cart = this.cart!;
+
+  const productIds = cart.items.map((items: Items) => {
+    return items.productId;
+  });
+
+  const products = (await Product.find({ _id: { $in: productIds } }).lean()) as ProductInterface[];
+
+  return products.map((product: ProductInterface) => {
+    return {
+      ...product,
+      quantity: cart.items.find((item: Items) => {
+        return item.productId.toString() === product._id!.toString();
+      })!.quantity,
+    };
+  });
 };
 
 export default model("User", userSchema);
