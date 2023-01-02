@@ -16,25 +16,25 @@ const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   }
 };
 
-// const getProduct = async (req: Request, res: Response, _: NextFunction) => {
-//   const prodId = req.params.productId;
+const getProduct = async (req: Request, res: Response, _: NextFunction) => {
+  const prodId = req.params.productId;
 
-//   try {
-//     const product = await Product.findById(prodId);
+  try {
+    const product = await Product.findById(prodId);
 
-//     if (!product) {
-//       return res.redirect("/");
-//     }
+    if (!product) {
+      return res.redirect("/");
+    }
 
-//     res.render("shop/product-detail", {
-//       product: product,
-//       docTitle: product.title,
-//       path: "/products",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+    res.render("shop/product-detail", {
+      product: product,
+      docTitle: product.title,
+      path: "/products",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const getIndex = async (_: Request, res: Response, __: NextFunction) => {
   try {
@@ -135,7 +135,7 @@ const getIndex = async (_: Request, res: Response, __: NextFunction) => {
 
 export default {
   getProducts,
-  //   getProduct,
+  getProduct,
   getIndex,
   //   getCart,
   //   postCart,
