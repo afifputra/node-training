@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import Product from "../models/product";
+import Product, { ProductInterface } from "../models/product";
 // import { ObjectId } from "mongodb";
 
 const getProducts = async (_: Request, res: Response, __: NextFunction) => {
@@ -64,25 +64,24 @@ const getIndex = async (_: Request, res: Response, __: NextFunction) => {
 //   }
 // };
 
-// const postCart = async (req: Request, res: Response, __: NextFunction) => {
-//   const requestUser = req.user;
-//   const productId: ObjectId = req.body.productId;
+const postCart = async (req: Request, res: Response, __: NextFunction) => {
+  const requestUser = req.user;
+  const productId: string = req.body.productId;
 
-//   try {
-//     const product = await Product.findById(productId.toString());
+  try {
+    const product = (await Product.findById(productId)) as ProductInterface;
 
-//     if (!product) {
-//       return res.redirect("/");
-//     }
+    if (!product) {
+      return res.redirect("/");
+    }
 
-//     const finalProduct = product as ProductInterface;
-//     await requestUser!.addToCart(finalProduct);
+    await requestUser!.addToCart(product);
 
-//     res.redirect("/cart");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+    res.redirect("/cart");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunction) => {
 //   const productId: ObjectId = req.body.productId;
@@ -138,7 +137,7 @@ export default {
   getProduct,
   getIndex,
   //   getCart,
-  //   postCart,
+  postCart,
   //   postCartDeleteProduct,
   //   getOrders,
   //   postOrder,

@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { ProductInterface } from "./product";
 
 interface Items {
   productId: Schema.Types.ObjectId;
@@ -11,6 +12,7 @@ export interface UserInterface {
   cart?: {
     items: Items[];
   };
+  addToCart: (product: ProductInterface) => Promise<void>;
 }
 
 const userSchema = new Schema({
@@ -38,6 +40,25 @@ const userSchema = new Schema({
     ],
   },
 });
+
+userSchema.methods.addToCart = function (product: ProductInterface) {
+  const cartProductIndex: number = this.cart!.items.findIndex((cp: Items) => {
+    return cp.productId.toString() === product._id!.toString();
+  });
+  let newQuantity = 1;
+  const updatedCartItems: Items[] = [...this.cart!.items];
+
+  if (cartProductIndex >= 0) {
+    newQuantity = this.cart!.items[cartProductIndex].quantity + 1;
+    updatedCartItems[cartProductIndex].quantity = newQuantity;
+  } else {
+    updatedCartItems.push({ productId: product._id!, quantity: newQuantity });
+  }
+
+  const updatedCart = { items: updatedCartItems };
+  this.cart = updatedCart;
+  return this.save();
+};
 
 export default model("User", userSchema);
 

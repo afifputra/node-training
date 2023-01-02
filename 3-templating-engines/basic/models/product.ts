@@ -1,5 +1,14 @@
 import { Schema, model } from "mongoose";
 
+export interface ProductInterface {
+  _id?: Schema.Types.ObjectId;
+  title: string;
+  price: number;
+  description: string;
+  imageUrl: string;
+  userId: Schema.Types.ObjectId;
+}
+
 const productSchema = new Schema({
   title: {
     type: String,
