@@ -2,6 +2,7 @@ import path from "path";
 import express from "express";
 import bodyParser from "body-parser";
 import { connect, set } from "mongoose";
+import session from "express-session";
 import User, { UserInterface } from "./models/user";
 
 import errorController from "./controllers/error";
@@ -24,6 +25,14 @@ app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootDir, "../", "public")));
+app.use(
+  session({
+    secret: "rimuru tempest",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 },
+  })
+);
 
 app.use((req, __, next) => {
   (async () => {
