@@ -3,6 +3,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { connect, set } from "mongoose";
 import session from "express-session";
+import ConnectMongoDBSession from "connect-mongodb-session";
 import User, { UserInterface } from "./models/user";
 
 import errorController from "./controllers/error";
@@ -18,7 +19,15 @@ declare module "express-serve-static-core" {
   }
 }
 
+const MONGODB_URI = "mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/shop";
+
+const MongoDBStore = ConnectMongoDBSession(session);
+
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions",
+});
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -31,20 +40,21 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 },
+    store: store,
   })
 );
 
-app.use((req, __, next) => {
-  (async () => {
-    try {
-      const user = await User.findById("63b24750d12ed099c3c2dbcc")!;
-      Object.assign(req, { user: user });
-      next();
-    } catch (error) {
-      console.log(error);
-    }
-  })();
-});
+// app.use((req, __, next) => {
+//   (async () => {
+//     try {
+//       const user = await User.findById("63b24750d12ed099c3c2dbcc")!;
+//       Object.assign(req, { user: user });
+//       next();
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   })();
+// });
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
@@ -56,7 +66,7 @@ set("strictQuery", true);
 
 (async () => {
   try {
-    await connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/shop?retryWrites=true&w=majority");
+    await connect(MONGODB_URI);
 
     const registUser = await User.findOne();
     if (!registUser) {

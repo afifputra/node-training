@@ -4,7 +4,8 @@ import Product, { ProductInterface } from "../models/product";
 import Order from "../models/order";
 // import { ObjectId } from "mongodb"
 
-const getProducts = async (_: Request, res: Response, __: NextFunction) => {
+const getProducts = async (req: Request, res: Response, __: NextFunction) => {
+  console.log(req.session);
   try {
     const products = await Product.find();
     res.render("shop/product-list", {
