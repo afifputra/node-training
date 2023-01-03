@@ -100,10 +100,10 @@ const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunctio
 const getOrders = async (req: Request, res: Response, _: NextFunction) => {
   const requestUser = req.user;
   try {
-    const orders = await Order.find({ "user.userId": requestUser?._id });
+    const orders = await Order.find({ "user.userId": requestUser?._id }).lean();
     const finalOrders = orders.map((order) => {
       return {
-        ...order._doc,
+        ...order,
         products: order.products.map((product) => {
           return {
             ...product.product,
@@ -112,7 +112,7 @@ const getOrders = async (req: Request, res: Response, _: NextFunction) => {
         }),
       };
     });
-    console.log(finalOrders);
+
     res.render("shop/orders", {
       docTitle: "Your Orders",
       path: "/orders",
