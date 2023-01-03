@@ -13,7 +13,6 @@ const getLogin = (req: Request, res: Response, __: NextFunction) => {
 const postLogin = (req: Request, res: Response, __: NextFunction) => {
   const { email, password } = req.body;
   console.log(email, password);
-  res.setHeader("Set-Cookie", "loggedIn=true;");
   return res.redirect("/");
 };
 
