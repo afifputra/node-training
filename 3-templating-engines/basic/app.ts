@@ -9,6 +9,7 @@ import errorController from "./controllers/error";
 import rootDir from "./utils/path";
 import adminRoutes from "./routes/admin";
 import shopRoutes from "./routes/shop";
+import authRoutes from "./routes/auth";
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -38,6 +39,7 @@ app.use((req, __, next) => {
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(errorController.get404);
 
