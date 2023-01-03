@@ -3,7 +3,7 @@ import User from "../models/user";
 import { Document } from "mongodb";
 
 const getLogin = (req: Request, res: Response, __: NextFunction) => {
-  const isLoggedIn = req.get("Cookie")?.includes("loggedIn=true");
+  const isLoggedIn = req.session?.isLoggedIn || false;
 
   res.render("auth/login", {
     docTitle: "Login",

@@ -16,11 +16,14 @@ const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   }
 };
 
-const getAddProduct = (_: Request, res: Response, __: NextFunction) => {
+const getAddProduct = (req: Request, res: Response, __: NextFunction) => {
+  const isLoggedIn = req.session?.isLoggedIn || false;
+
   res.render("admin/edit-product", {
     docTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
+    isAuthenticated: isLoggedIn,
   });
 };
 
@@ -29,7 +32,7 @@ const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;
   const description: string = req.body.description;
-  const userId = req.user?._id;
+  const userId = req.session?.user;
 
   const product = new Product({
     title,

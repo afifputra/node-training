@@ -19,6 +19,13 @@ declare module "express-serve-static-core" {
   }
 }
 
+declare module "express-session" {
+  interface SessionData {
+    user?: UserInterface;
+    isLoggedIn?: boolean;
+  }
+}
+
 const MONGODB_URI = "mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/shop";
 
 const MongoDBStore = ConnectMongoDBSession(session);
