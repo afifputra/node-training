@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 import Product, { ProductInterface } from "../models/product";
 import Order from "../models/order";
-// import { ObjectId } from "mongodb";
+// import { ObjectId } from "mongodb"
 
 const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   try {
@@ -129,8 +129,12 @@ const postOrder = async (req: Request, res: Response, _: NextFunction) => {
   try {
     const getCart = await requestUser.populate("cart.items.productId");
     const products = getCart.cart?.items.map((i: any) => {
-      return { quantity: i.quantity, product: { ...i.productId._doc } };
+      const { userId, ...rest } = i.productId._doc;
+      return { quantity: i.quantity, product: { ...rest } };
     });
+    const totalPrice = getCart.cart?.items.reduce((acc: number, i: any) => {
+      return acc + i.quantity * i.productId.price;
+    }, 0);
 
     const order = new Order({
       user: {
@@ -138,6 +142,7 @@ const postOrder = async (req: Request, res: Response, _: NextFunction) => {
         userId: requestUser,
       },
       products: products,
+      totalPrice,
     });
 
     await order.save();

@@ -24,6 +24,10 @@ const orderSchema = new Schema({
       required: true,
     },
   },
+  totalPrice: {
+    type: Number,
+    required: true,
+  },
 });
 
 export default model("Order", orderSchema);
