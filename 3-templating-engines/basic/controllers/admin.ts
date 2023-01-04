@@ -35,7 +35,7 @@ const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
   const imageUrl: string = req.body.imageUrl;
   const price: number = req.body.price;
   const description: string = req.body.description;
-  const userId = req.session?.user;
+  const userId = req.user!._id;
 
   const product = new Product({
     title,
@@ -82,7 +82,6 @@ const postEditProduct = async (req: Request, res: Response, _: NextFunction) => 
   const updatedPrice: number = +req.body.price;
   const updatedImageUrl: string = req.body.imageUrl;
   const updatedDesc: string = req.body.description;
-  // const userId: ObjectID = new ObjectID(req.user!._id);
 
   try {
     const result = await Product.findByIdAndUpdate(

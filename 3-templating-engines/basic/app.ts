@@ -51,17 +51,21 @@ app.use(
   })
 );
 
-// app.use((req, __, next) => {
-//   (async () => {
-//     try {
-//       const user = await User.findById("63b24750d12ed099c3c2dbcc")!;
-//       Object.assign(req, { user: user });
-//       next();
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   })();
-// });
+app.use((req, __, next) => {
+  if (!req.session?.isLoggedIn) {
+    return next();
+  }
+
+  (async () => {
+    try {
+      const user = await User.findById(req.session?.user?._id)!;
+      Object.assign(req, { user: user });
+      next();
+    } catch (error) {
+      console.log(error);
+    }
+  })();
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
