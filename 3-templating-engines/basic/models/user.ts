@@ -1,5 +1,6 @@
 import { Document, Schema, model } from "mongoose";
 import { ProductInterface } from "./product";
+import { compare } from "bcryptjs";
 
 export interface Items {
   productId: Schema.Types.ObjectId;
@@ -15,6 +16,7 @@ export interface UserInterface extends Document {
   addToCart: (product: ProductInterface) => Promise<void>;
   deleteItemFromCart: (productId: string) => Promise<void>;
   clearCart: () => Promise<void>;
+  comparePassword: (password: string) => Promise<boolean>;
 }
 
 const userSchema = new Schema({
@@ -78,6 +80,11 @@ userSchema.methods.deleteItemFromCart = function (productId: string) {
 userSchema.methods.clearCart = function () {
   this.cart = { items: [] };
   return this.save();
+};
+
+userSchema.methods.comparePassword = async function (password: string) {
+  const isMatch = await compare(password, this.password);
+  return isMatch;
 };
 
 export default model("User", userSchema);

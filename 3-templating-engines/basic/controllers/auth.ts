@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import User from "../models/user";
+import { hash } from "bcryptjs";
+import User, { UserInterface } from "../models/user";
 import { Document } from "mongodb";
 
 const getLogin = (req: Request, res: Response, __: NextFunction) => {
@@ -22,15 +23,24 @@ const getSignup = (_: Request, res: Response, __: NextFunction) => {
 
 const postLogin = async (req: Request, res: Response, __: NextFunction) => {
   const { email, password } = req.body;
-  console.log(email, password);
 
-  const fetchedUser = (await User.findById("63b24750d12ed099c3c2dbcc")!) as Document;
+  const fetchedUser = (await User.findOne({ email })) as UserInterface & Document;
+
+  if (!fetchedUser) {
+    return res.redirect("/login");
+  }
+
+  const isPasswordValid = await fetchedUser.comparePassword(password);
+
+  if (!isPasswordValid) {
+    return res.redirect("/login");
+  }
+
   const { cart, ...user } = fetchedUser._doc;
 
   if (user) {
     Object.assign(req.session, { user, isLoggedIn: true });
-    req.session!.save((error) => {
-      console.log(error);
+    req.session!.save(() => {
       res.redirect("/");
     });
   } else {
@@ -53,10 +63,11 @@ const postSignup = async (req: Request, res: Response, ___: NextFunction) => {
     if (userDoc) {
       return res.redirect("/signup");
     }
+    const encryptedPassword = await hash(password, 12);
     const user = new User({
       name,
       email,
-      password,
+      password: encryptedPassword,
       cart: { items: [] },
     });
     await user.save();
