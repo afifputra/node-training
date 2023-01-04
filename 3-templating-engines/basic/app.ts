@@ -79,18 +79,6 @@ set("strictQuery", true);
   try {
     await connect(MONGODB_URI);
 
-    const registUser = await User.findOne();
-    if (!registUser) {
-      const user = new User({
-        name: "Afif",
-        email: "afif@mailinator.com",
-        cart: {
-          items: [],
-        },
-      });
-      await user.save();
-    }
-
     app.listen(3001);
 
     console.log("Connected to database");

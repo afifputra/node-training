@@ -45,7 +45,26 @@ const postLogout = (req: Request, res: Response, __: NextFunction) => {
   });
 };
 
-const postSignup = (_: Request, __: Response, ___: NextFunction) => {};
+const postSignup = async (req: Request, res: Response, ___: NextFunction) => {
+  const { name, email, password } = req.body;
+  // Should Validate - But Not Now
+  try {
+    const userDoc = await User.findOne({ email });
+    if (userDoc) {
+      return res.redirect("/signup");
+    }
+    const user = new User({
+      name,
+      email,
+      password,
+      cart: { items: [] },
+    });
+    await user.save();
+    res.redirect("/login");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export default {
   getLogin,
