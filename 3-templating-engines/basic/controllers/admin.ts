@@ -3,13 +3,16 @@ import { Request, Response, NextFunction } from "express";
 import Product from "../models/product";
 // import { ObjectID } from "bson";
 
-const getProducts = async (_: Request, res: Response, __: NextFunction) => {
+const getProducts = async (req: Request, res: Response, __: NextFunction) => {
+  const isLoggedIn = req.session?.isLoggedIn || false;
+
   try {
     const products = await Product.find();
     res.render("admin/products", {
       prods: products ? products : [],
       docTitle: "Admin Products",
       path: "/admin/products",
+      isAuthenticated: isLoggedIn,
     });
   } catch (error) {
     console.log(error);
@@ -47,6 +50,7 @@ const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
 
 const getEditProduct = async (req: Request, res: Response, _: NextFunction) => {
   const editMode = req.query.edit;
+  const isLoggedIn = req.session?.isLoggedIn || false;
 
   if (!editMode) {
     return res.redirect("/");
@@ -65,6 +69,7 @@ const getEditProduct = async (req: Request, res: Response, _: NextFunction) => {
       path: "/admin/edit-product",
       editing: editMode,
       product: product,
+      isAuthenticated: isLoggedIn,
     });
   } catch (error) {
     console.log(error);
