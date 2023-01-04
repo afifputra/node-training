@@ -59,26 +59,27 @@ const getIndex = async (req: Request, res: Response, __: NextFunction) => {
 };
 
 const getCart = async (req: Request, res: Response, _: NextFunction) => {
-  const isLoggedIn = req.session?.isLoggedIn || false;
-  const requestUser = req.user!;
+  // const isLoggedIn = req.session?.isLoggedIn || false;
+  const requestUser = req.session?.user!;
+  console.log(await requestUser.populate("cart.items.productId"));
+  res.redirect("/");
+  // try {
+  //   const getCart = await requestUser.populate("cart.items.productId");
+  //   const cart = getCart.cart?.items || [];
 
-  try {
-    const getCart = await requestUser.populate("cart.items.productId");
-    const cart = getCart.cart?.items || [];
-
-    res.render("shop/cart", {
-      docTitle: "Your Cart",
-      path: "/cart",
-      products: cart,
-      isAuthenticated: isLoggedIn,
-    });
-  } catch (error) {
-    console.log(error);
-  }
+  //   res.render("shop/cart", {
+  //     docTitle: "Your Cart",
+  //     path: "/cart",
+  //     products: cart,
+  //     isAuthenticated: isLoggedIn,
+  //   });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 };
 
 const postCart = async (req: Request, res: Response, __: NextFunction) => {
-  const requestUser = req.user;
+  const requestUser = req.session?.user!;
   const productId: string = req.body.productId;
 
   try {
@@ -108,7 +109,7 @@ const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunctio
 };
 
 const getOrders = async (req: Request, res: Response, _: NextFunction) => {
-  const requestUser = req.user;
+  const requestUser = req.session?.user!;
   const isLoggedIn = req.session?.isLoggedIn || false;
 
   try {
@@ -137,7 +138,7 @@ const getOrders = async (req: Request, res: Response, _: NextFunction) => {
 };
 
 const postOrder = async (req: Request, res: Response, _: NextFunction) => {
-  const requestUser = req.user!;
+  const requestUser = req.session?.user!;
 
   try {
     const getCart = await requestUser.populate("cart.items.productId");
