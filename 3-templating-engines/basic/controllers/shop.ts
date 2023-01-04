@@ -99,9 +99,10 @@ const postCart = async (req: Request, res: Response, __: NextFunction) => {
 
 const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunction) => {
   const productId: string = req.body.productId;
+  const requestUser = req.session?.user!;
 
   try {
-    await req.user!.deleteItemFromCart(productId);
+    await requestUser.deleteItemFromCart(productId);
     res.redirect("/cart");
   } catch (error) {
     console.log(error);

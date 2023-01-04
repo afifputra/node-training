@@ -29,9 +29,17 @@ const postLogin = async (req: Request, res: Response, __: NextFunction) => {
   }
 };
 
+const postLogout = (req: Request, res: Response, __: NextFunction) => {
+  req.session?.destroy((error) => {
+    console.log(error);
+    res.redirect("/");
+  });
+};
+
 export default {
   getLogin,
   postLogin,
+  postLogout,
 };
 
 // store user on session
