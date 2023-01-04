@@ -12,6 +12,14 @@ const getLogin = (req: Request, res: Response, __: NextFunction) => {
   });
 };
 
+const getSignup = (_: Request, res: Response, __: NextFunction) => {
+  res.render("auth/signup", {
+    path: "/signup",
+    docTitle: "Signup",
+    isAuthenticated: false,
+  });
+};
+
 const postLogin = async (req: Request, res: Response, __: NextFunction) => {
   const { email, password } = req.body;
   console.log(email, password);
@@ -37,10 +45,14 @@ const postLogout = (req: Request, res: Response, __: NextFunction) => {
   });
 };
 
+const postSignup = (_: Request, __: Response, ___: NextFunction) => {};
+
 export default {
   getLogin,
+  getSignup,
   postLogin,
   postLogout,
+  postSignup,
 };
 
 // store user on session
