@@ -1,4 +1,5 @@
 import { Router } from "express";
+import isAuth from "../middleware/is-auth";
 
 import shopController from "../controllers/shop";
 
@@ -14,19 +15,19 @@ router.get("/products", shopController.getProducts);
 router.get("/products/:productId", shopController.getProduct);
 
 // GET => /cart
-router.get("/cart", shopController.getCart);
+router.get("/cart", isAuth, shopController.getCart);
 
 // POST => /cart
-router.post("/cart", shopController.postCart);
+router.post("/cart", isAuth, shopController.postCart);
 
 // POST => /cart-delete-item
-router.post("/cart-delete-item", shopController.postCartDeleteProduct);
+router.post("/cart-delete-item", isAuth, shopController.postCartDeleteProduct);
 
 // GET => /orders
-router.get("/orders", shopController.getOrders);
+router.get("/orders", isAuth, shopController.getOrders);
 
 // POST => /create-order
-router.post("/create-order", shopController.postOrder);
+router.post("/create-order", isAuth, shopController.postOrder);
 
 // GET => /checkout
 // router.get("/checkout", shopController.getCheckout);
