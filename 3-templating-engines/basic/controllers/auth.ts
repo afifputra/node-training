@@ -5,6 +5,7 @@ import { Document } from "mongodb";
 
 const getLogin = (req: Request, res: Response, __: NextFunction) => {
   const message = req.flash("error");
+
   res.render("auth/login", {
     docTitle: "Login",
     path: "/login",
@@ -12,10 +13,13 @@ const getLogin = (req: Request, res: Response, __: NextFunction) => {
   });
 };
 
-const getSignup = (_: Request, res: Response, __: NextFunction) => {
+const getSignup = (req: Request, res: Response, __: NextFunction) => {
+  const message = req.flash("error");
+
   res.render("auth/signup", {
     path: "/signup",
     docTitle: "Signup",
+    errorMessage: message.length > 0 ? message[0] : null,
   });
 };
 
@@ -25,13 +29,14 @@ const postLogin = async (req: Request, res: Response, __: NextFunction) => {
   const fetchedUser = (await User.findOne({ email })) as UserInterface & Document;
 
   if (!fetchedUser) {
-    req.flash("error", "Invalid email or password.");
+    req.flash("error", "Invalid email.");
     return res.redirect("/login");
   }
 
   const isPasswordValid = await fetchedUser.comparePassword(password);
 
   if (!isPasswordValid) {
+    req.flash("error", "Invalid password.");
     return res.redirect("/login");
   }
 
@@ -59,6 +64,7 @@ const postSignup = async (req: Request, res: Response, ___: NextFunction) => {
   try {
     const userDoc = await User.findOne({ email });
     if (userDoc) {
+      req.flash("error", "Email already exists.");
       return res.redirect("/signup");
     }
     const encryptedPassword = await hash(password, 12);
