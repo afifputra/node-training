@@ -3,30 +3,24 @@ import { Request, Response, NextFunction } from "express";
 import Product from "../models/product";
 // import { ObjectID } from "bson";
 
-const getProducts = async (req: Request, res: Response, __: NextFunction) => {
-  const isLoggedIn = req.session?.isLoggedIn || false;
-
+const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   try {
     const products = await Product.find();
     res.render("admin/products", {
       prods: products ? products : [],
       docTitle: "Admin Products",
       path: "/admin/products",
-      isAuthenticated: isLoggedIn,
     });
   } catch (error) {
     console.log(error);
   }
 };
 
-const getAddProduct = (req: Request, res: Response, __: NextFunction) => {
-  const isLoggedIn = req.session?.isLoggedIn || false;
-
+const getAddProduct = (_: Request, res: Response, __: NextFunction) => {
   res.render("admin/edit-product", {
     docTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
-    isAuthenticated: isLoggedIn,
   });
 };
 
@@ -50,7 +44,6 @@ const postAddProduct = async (req: Request, res: Response, _: NextFunction) => {
 
 const getEditProduct = async (req: Request, res: Response, _: NextFunction) => {
   const editMode = req.query.edit;
-  const isLoggedIn = req.session?.isLoggedIn || false;
 
   if (!editMode) {
     return res.redirect("/");
@@ -69,7 +62,6 @@ const getEditProduct = async (req: Request, res: Response, _: NextFunction) => {
       path: "/admin/edit-product",
       editing: editMode,
       product: product,
-      isAuthenticated: isLoggedIn,
     });
   } catch (error) {
     console.log(error);

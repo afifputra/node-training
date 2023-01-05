@@ -21,6 +21,7 @@
                 </ul>
                 <div class="centered">
                     <form action="/create-order" method="post">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <button class="btn success" type="submit">Order Now!</button>
                     </form>
                 </div>

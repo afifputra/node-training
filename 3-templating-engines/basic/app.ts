@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import { connect, set } from "mongoose";
 import session from "express-session";
 import ConnectMongoDBSession from "connect-mongodb-session";
+import Csrf from "csurf";
+
 import User, { UserInterface } from "./models/user";
 
 import errorController from "./controllers/error";
@@ -35,6 +37,7 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "sessions",
 });
+const csrfProtection = Csrf();
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -50,6 +53,7 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection);
 
 app.use((req, __, next) => {
   if (!req.session?.isLoggedIn) {
@@ -65,6 +69,12 @@ app.use((req, __, next) => {
       console.log(error);
     }
   })();
+});
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session?.isLoggedIn || false;
+  res.locals.csrfToken = req.csrfToken();
+  next();
 });
 
 app.use("/admin", adminRoutes);

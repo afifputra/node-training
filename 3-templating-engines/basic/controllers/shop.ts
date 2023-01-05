@@ -4,16 +4,13 @@ import Product, { ProductInterface } from "../models/product";
 import Order from "../models/order";
 // import { ObjectId } from "mongodb"
 
-const getProducts = async (req: Request, res: Response, __: NextFunction) => {
-  const isLoggedIn = req.session?.isLoggedIn || false;
-
+const getProducts = async (_: Request, res: Response, __: NextFunction) => {
   try {
     const products = await Product.find();
     res.render("shop/product-list", {
       prods: products,
       docTitle: "All Products",
       path: "/products",
-      isAuthenticated: isLoggedIn,
     });
   } catch (error) {
     console.log(error);
@@ -21,7 +18,6 @@ const getProducts = async (req: Request, res: Response, __: NextFunction) => {
 };
 
 const getProduct = async (req: Request, res: Response, _: NextFunction) => {
-  const isLoggedIn = req.session?.isLoggedIn || false;
   const prodId = req.params.productId;
 
   try {
@@ -35,23 +31,19 @@ const getProduct = async (req: Request, res: Response, _: NextFunction) => {
       product: product,
       docTitle: product.title,
       path: "/products",
-      isAuthenticated: isLoggedIn,
     });
   } catch (error) {
     console.log(error);
   }
 };
 
-const getIndex = async (req: Request, res: Response, __: NextFunction) => {
-  const isLoggedIn = req.session?.isLoggedIn || false;
-
+const getIndex = async (_: Request, res: Response, __: NextFunction) => {
   try {
     const products = await Product.find();
     res.render("shop/index", {
       prods: products,
       docTitle: "Shop",
       path: "/",
-      isAuthenticated: isLoggedIn,
     });
   } catch (error) {
     console.log(error);
@@ -59,7 +51,6 @@ const getIndex = async (req: Request, res: Response, __: NextFunction) => {
 };
 
 const getCart = async (req: Request, res: Response, _: NextFunction) => {
-  const isLoggedIn = req.session?.isLoggedIn || false;
   const requestUser = req.user!;
 
   try {
@@ -70,7 +61,6 @@ const getCart = async (req: Request, res: Response, _: NextFunction) => {
       docTitle: "Your Cart",
       path: "/cart",
       products: cart,
-      isAuthenticated: isLoggedIn,
     });
   } catch (error) {
     console.log(error);
@@ -110,7 +100,6 @@ const postCartDeleteProduct = async (req: Request, res: Response, _: NextFunctio
 
 const getOrders = async (req: Request, res: Response, _: NextFunction) => {
   const requestUser = req.user!;
-  const isLoggedIn = req.session?.isLoggedIn || false;
 
   try {
     const orders = await Order.find({ "user.userId": requestUser?._id }).lean();
@@ -130,7 +119,6 @@ const getOrders = async (req: Request, res: Response, _: NextFunction) => {
       docTitle: "Your Orders",
       path: "/orders",
       orders: finalOrders,
-      isAuthenticated: isLoggedIn,
     });
   } catch (error) {
     console.log(error);

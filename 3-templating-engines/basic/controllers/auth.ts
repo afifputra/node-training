@@ -3,13 +3,10 @@ import { hash } from "bcryptjs";
 import User, { UserInterface } from "../models/user";
 import { Document } from "mongodb";
 
-const getLogin = (req: Request, res: Response, __: NextFunction) => {
-  const isLoggedIn = req.session?.isLoggedIn || false;
-
+const getLogin = (_: Request, res: Response, __: NextFunction) => {
   res.render("auth/login", {
     docTitle: "Login",
     path: "/login",
-    isAuthenticated: isLoggedIn,
   });
 };
 
@@ -17,7 +14,6 @@ const getSignup = (_: Request, res: Response, __: NextFunction) => {
   res.render("auth/signup", {
     path: "/signup",
     docTitle: "Signup",
-    isAuthenticated: false,
   });
 };
 
@@ -49,8 +45,7 @@ const postLogin = async (req: Request, res: Response, __: NextFunction) => {
 };
 
 const postLogout = (req: Request, res: Response, __: NextFunction) => {
-  req.session?.destroy((error) => {
-    console.log(error);
+  req.session?.destroy(() => {
     res.redirect("/");
   });
 };
