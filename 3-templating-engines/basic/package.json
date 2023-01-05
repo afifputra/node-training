@@ -24,6 +24,7 @@
   "author": "Afif Putra Haryono",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
     "connect-flash": "^0.1.1",

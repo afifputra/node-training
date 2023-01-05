@@ -1,7 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { hash } from "bcryptjs";
+import mail from "@sendgrid/mail/src/mail";
+// import { createTransport } from "nodemailer";
+// import sendGrid from "nodemailer-sendgrid";
+
 import User, { UserInterface } from "../models/user";
 import { Document } from "mongodb";
+
+// const transporter = createTransport(
+//   sendGrid({
+//     apiKey: "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",
+//   })
+// );
+
+mail.setApiKey("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");
 
 const getLogin = (req: Request, res: Response, __: NextFunction) => {
   const message = req.flash("error");
@@ -75,7 +87,29 @@ const postSignup = async (req: Request, res: Response, ___: NextFunction) => {
       cart: { items: [] },
     });
     await user.save();
-    res.redirect("/login");
+
+    // try {
+    //   await transporter.sendMail({
+    //     to: email,
+    //     from: "<>",
+    //     subject: "Signup Succeeded!",
+    //     html: "<h1>You successfully signed up!</h1>",
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
+    try {
+      await mail.send({
+        to: email,
+        from: "renoa230112@gmail.com",
+        subject: "Signup Succeeded!",
+        html: "<h1>You successfully signed up!</h1>",
+      });
+      res.redirect("/login");
+    } catch (error) {
+      console.log(error.response.body.errors);
+    }
   } catch (error) {
     console.log(error);
   }
