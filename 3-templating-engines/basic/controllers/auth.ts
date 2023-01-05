@@ -4,10 +4,11 @@ import User, { UserInterface } from "../models/user";
 import { Document } from "mongodb";
 
 const getLogin = (req: Request, res: Response, __: NextFunction) => {
+  const message = req.flash("error");
   res.render("auth/login", {
     docTitle: "Login",
     path: "/login",
-    errorMessage: req.flash("error"),
+    errorMessage: message.length > 0 ? message[0] : null,
   });
 };
 
