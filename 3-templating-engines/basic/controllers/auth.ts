@@ -3,10 +3,11 @@ import { hash } from "bcryptjs";
 import User, { UserInterface } from "../models/user";
 import { Document } from "mongodb";
 
-const getLogin = (_: Request, res: Response, __: NextFunction) => {
+const getLogin = (req: Request, res: Response, __: NextFunction) => {
   res.render("auth/login", {
     docTitle: "Login",
     path: "/login",
+    errorMessage: req.flash("error"),
   });
 };
 
@@ -23,6 +24,7 @@ const postLogin = async (req: Request, res: Response, __: NextFunction) => {
   const fetchedUser = (await User.findOne({ email })) as UserInterface & Document;
 
   if (!fetchedUser) {
+    req.flash("error", "Invalid email or password.");
     return res.redirect("/login");
   }
 

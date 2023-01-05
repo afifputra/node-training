@@ -5,6 +5,7 @@ import { connect, set } from "mongoose";
 import session from "express-session";
 import ConnectMongoDBSession from "connect-mongodb-session";
 import Csrf from "csurf";
+import Flash from "connect-flash";
 
 import User, { UserInterface } from "./models/user";
 
@@ -54,6 +55,7 @@ app.use(
   })
 );
 app.use(csrfProtection);
+app.use(Flash());
 
 app.use((req, __, next) => {
   if (!req.session?.isLoggedIn) {
