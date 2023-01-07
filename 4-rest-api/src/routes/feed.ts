@@ -9,6 +9,6 @@ const router = Router();
 router.get("/posts", FeedController.getPosts);
 
 // POST /feed/post
-router.post("/post", [body("title").trim().isLength({ min: 7 }), body("content").trim().isLength({ min: 5 })], FeedController.createPost);
+router.post("/post", [body("title").trim().isLength({ min: 5 }), body("content").trim().isLength({ min: 5 })], FeedController.createPost);
 
 export default router;
