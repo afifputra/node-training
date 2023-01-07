@@ -17,6 +17,20 @@ const getPosts: RequestHandler = (_, res, __) => {
   });
 };
 
+const createPost: RequestHandler = (req, res, __) => {
+  const { title, content } = req.body;
+
+  res.status(201).json({
+    message: "Post created successfully!",
+    post: {
+      _id: new Date().toISOString(),
+      title,
+      content,
+    },
+  });
+};
+
 export default {
   getPosts,
+  createPost,
 };
