@@ -9,7 +9,7 @@ const getPosts: RequestHandler = (_, res, __) => {
         content: "This is the first post!",
         imageUrl: "images/duck.jpg",
         creator: {
-          name: "Maximilian",
+          name: "Afif",
         },
         createdAt: new Date(),
       },
@@ -26,6 +26,10 @@ const createPost: RequestHandler = (req, res, __) => {
       _id: new Date().toISOString(),
       title,
       content,
+      creator: {
+        name: "Afif",
+      },
+      createdAt: new Date(),
     },
   });
 };
