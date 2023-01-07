@@ -1,6 +1,8 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 
+import Post from "../models/post";
+
 const getPosts: RequestHandler = (_, res, __) => {
   res.status(200).json({
     posts: [
@@ -18,7 +20,7 @@ const getPosts: RequestHandler = (_, res, __) => {
   });
 };
 
-const createPost: RequestHandler = (req, res, __) => {
+const createPost: RequestHandler = async (req, res, __) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -30,18 +32,24 @@ const createPost: RequestHandler = (req, res, __) => {
 
   const { title, content } = req.body;
 
-  res.status(201).json({
-    message: "Post created successfully!",
-    post: {
-      _id: new Date().toISOString(),
-      title,
-      content,
-      creator: {
-        name: "Afif",
-      },
-      createdAt: new Date(),
+  const post = new Post({
+    title,
+    content,
+    imageUrl: "images/duck.jpg",
+    creator: {
+      name: "Afif",
     },
   });
+
+  try {
+    await post.save();
+    res.status(201).json({
+      message: "Post created successfully!",
+      post,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export default {
