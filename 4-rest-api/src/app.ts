@@ -1,4 +1,5 @@
 import Express from "express";
+import mongoose from "mongoose";
 
 import FeedRouter from "./routes/feed";
 
@@ -15,6 +16,16 @@ app.use((_, res, next) => {
 
 app.use("/feed", FeedRouter);
 
-app.listen(3003, () => {
-  console.log("Server started on port 3003");
-});
+mongoose.set("strictQuery", true);
+
+(async () => {
+  try {
+    await mongoose.connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/messages?retryWrites=true&w=majority");
+
+    app.listen(3003);
+
+    console.log("Server is running on port 3003");
+  } catch (error) {
+    console.log(error);
+  }
+})();
