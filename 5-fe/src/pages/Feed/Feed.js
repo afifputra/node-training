@@ -141,7 +141,7 @@ class Feed extends Component {
             const postIndex = prevState.posts.findIndex((p) => p._id === prevState.editPost._id);
             updatedPosts[postIndex] = post;
           } else if (prevState.posts.length < 2) {
-            updatedPosts = prevState.posts.concat(post);
+            updatedPosts = [post, ...prevState.posts];
           }
           return {
             posts: updatedPosts,
@@ -152,7 +152,6 @@ class Feed extends Component {
         });
       })
       .catch((err) => {
-        console.log(err);
         this.setState({
           isEditing: false,
           editPost: null,
