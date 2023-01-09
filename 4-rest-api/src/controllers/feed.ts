@@ -5,12 +5,20 @@ import { clearImage } from "../helpers/function";
 
 import Post from "../models/post";
 
-const getPosts: RequestHandler = async (_, res, __) => {
+const getPosts: RequestHandler = async (req, res, __) => {
+  const currentPage: number = req.query.page ? +req.query.page : 1;
+  const perPage: number = 2;
+
   try {
-    const posts = await Post.find();
+    const totalItems = await Post.find().countDocuments();
+    const posts = await Post.find()
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
 
     res.status(200).json({
+      message: "Fetched posts successfully.",
       posts,
+      totalItems,
     });
   } catch (error) {
     return res.status(500).json({
