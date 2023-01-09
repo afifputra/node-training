@@ -1,13 +1,33 @@
 import Express from "express";
 import mongoose from "mongoose";
 import path from "path";
+import multer from "multer";
+import { v4 } from "uuid";
 
 import FeedRouter from "./routes/feed";
 
 const app = Express();
 
+const fileStorage = multer.diskStorage({
+  destination: (_, __, cb) => {
+    cb(null, "dist/images");
+  },
+  filename: (_, file, cb) => {
+    cb(null, `${v4()}-${file.originalname}`);
+  },
+});
+
+const fileFilter = (_: Express.Request, file: globalThis.Express.Multer.File, cb: multer.FileFilterCallback) => {
+  if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
 app.use(Express.json());
-app.use("/images", Express.static(path.join(__dirname, "images")));
+app.use(multer({ storage: fileStorage, fileFilter }).single("image"));
+app.use("/dist/images", Express.static(path.join(__dirname, "..", "dist", "images")));
 
 app.use((_, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

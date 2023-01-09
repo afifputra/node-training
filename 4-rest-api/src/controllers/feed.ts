@@ -49,12 +49,19 @@ const createPost: RequestHandler = async (req, res, _) => {
     });
   }
 
+  if (!req.file) {
+    return res.status(422).json({
+      message: "No image provided.",
+    });
+  }
+
+  const imageUrl = req.file.path.replace(/\\/g, "/");
   const { title, content } = req.body;
 
   const post = new Post({
     title,
     content,
-    imageUrl: "images/duck.jpg",
+    imageUrl,
     creator: {
       name: "Afif",
     },
