@@ -105,19 +105,20 @@ class Feed extends Component {
     this.setState({
       editLoading: true,
     });
-
     const formData = new FormData();
     formData.append("title", postData.title);
     formData.append("content", postData.content);
-    formData.append("image", postData.image);
+    formData.append("image", postData.image || this.state.editPost.imageUrl);
 
     let url = "http://localhost:3003/feed/post";
+    let method = "POST";
     if (this.state.editPost) {
-      url = "URL";
+      url = "http://localhost:3003/feed/post/" + this.state.editPost._id;
+      method = "PUT";
     }
 
     fetch(url, {
-      method: "POST",
+      method,
       body: formData,
     })
       .then((res) => {

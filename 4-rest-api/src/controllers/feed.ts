@@ -80,8 +80,57 @@ const createPost: RequestHandler = async (req, res, _) => {
   }
 };
 
+const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      message: "Validation failed, entered data is incorrect.",
+      errors: errors.array(),
+    });
+  }
+
+  const { postId } = req.params;
+  const { title, content } = req.body;
+  let imageUrl = req.body.image;
+
+  if (req.file) {
+    imageUrl = req.file.path.replace(/\\/g, "/");
+  }
+
+  if (!imageUrl) {
+    return res.status(422).json({
+      message: "No file picked.",
+    });
+  }
+
+  try {
+    const post = await Post.findByIdAndUpdate(postId, {
+      title,
+      content,
+      imageUrl,
+    });
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Could not find post.",
+      });
+    }
+
+    res.status(200).json({
+      message: "Post updated!",
+      post,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Couldn't update post.",
+    });
+  }
+};
+
 export default {
   getPosts,
   getPost,
   createPost,
+  updatePost,
 };
