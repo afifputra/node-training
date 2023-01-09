@@ -4,8 +4,8 @@ import path from "path";
 import multer from "multer";
 import { v4 } from "uuid";
 
-import FeedRouter from "./routes/feed";
-import UserRouter from "./routes/auth";
+import FeedRoutes from "./routes/feed";
+import UserRoutes from "./routes/auth";
 
 const app = Express();
 
@@ -37,8 +37,8 @@ app.use((_, res, next) => {
   next();
 });
 
-app.use("/feed", FeedRouter);
-app.use("/auth", UserRouter);
+app.use("/feed", FeedRoutes);
+app.use("/auth", UserRoutes);
 
 mongoose.set("strictQuery", true);
 
