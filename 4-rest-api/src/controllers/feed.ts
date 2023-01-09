@@ -1,6 +1,8 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 
+import { clearImage } from "../helpers/function";
+
 import Post from "../models/post";
 
 const getPosts: RequestHandler = async (_, res, __) => {
@@ -105,11 +107,7 @@ const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
   }
 
   try {
-    const post = await Post.findByIdAndUpdate(postId, {
-      title,
-      content,
-      imageUrl,
-    });
+    const post = await Post.findById(postId);
 
     if (!post) {
       return res.status(404).json({
@@ -117,9 +115,18 @@ const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
       });
     }
 
+    if (imageUrl !== post.imageUrl) {
+      clearImage(post.imageUrl);
+    }
+
+    post.title = title;
+    post.imageUrl = imageUrl;
+    post.content = content;
+    const result = await post.save();
+
     res.status(200).json({
       message: "Post updated!",
-      post,
+      post: result,
     });
   } catch (error) {
     return res.status(500).json({
