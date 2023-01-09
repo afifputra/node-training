@@ -3,21 +3,18 @@ import { validationResult } from "express-validator";
 
 import Post from "../models/post";
 
-const getPosts: RequestHandler = (_, res, __) => {
-  res.status(200).json({
-    posts: [
-      {
-        _id: "1",
-        title: "First Post",
-        content: "This is the first post!",
-        imageUrl: "images/duck.jpg",
-        creator: {
-          name: "Afif",
-        },
-        createdAt: new Date(),
-      },
-    ],
-  });
+const getPosts: RequestHandler = async (_, res, __) => {
+  try {
+    const posts = await Post.find();
+
+    res.status(200).json({
+      posts,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Fetching posts failed!",
+    });
+  }
 };
 
 const getPost: RequestHandler<{ postId: string }> = async (req, res, __) => {
