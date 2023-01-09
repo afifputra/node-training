@@ -135,9 +135,35 @@ const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
   }
 };
 
+const deletePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
+  const { postId } = req.params;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Could not find post.",
+      });
+    }
+
+    clearImage(post.imageUrl);
+    await Post.findByIdAndRemove(postId);
+
+    res.status(200).json({
+      message: "Deleted post.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Deleting post failed!",
+    });
+  }
+};
+
 export default {
   getPosts,
   getPost,
   createPost,
   updatePost,
+  deletePost,
 };
