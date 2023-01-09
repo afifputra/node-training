@@ -20,7 +20,29 @@ const getPosts: RequestHandler = (_, res, __) => {
   });
 };
 
-const createPost: RequestHandler = async (req, res, __) => {
+const getPost: RequestHandler<{ postId: string }> = async (req, res, __) => {
+  const { postId } = req.params;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Could not find post.",
+      });
+    }
+
+    res.status(200).json({
+      post,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Fetching post failed!",
+    });
+  }
+};
+
+const createPost: RequestHandler = async (req, res, _) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -48,11 +70,14 @@ const createPost: RequestHandler = async (req, res, __) => {
       post,
     });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      message: "Creating a post failed!",
+    });
   }
 };
 
 export default {
   getPosts,
+  getPost,
   createPost,
 };

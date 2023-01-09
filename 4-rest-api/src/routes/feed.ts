@@ -8,6 +8,9 @@ const router = Router();
 // GET /feed/posts
 router.get("/posts", FeedController.getPosts);
 
+// GET /feed/post/:postId
+router.get("/post/:postId", FeedController.getPost);
+
 // POST /feed/post
 router.post("/post", [body("title").trim().isLength({ min: 5 }), body("content").trim().isLength({ min: 5 })], FeedController.createPost);
 

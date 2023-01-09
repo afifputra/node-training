@@ -1,11 +1,13 @@
 import Express from "express";
 import mongoose from "mongoose";
+import path from "path";
 
 import FeedRouter from "./routes/feed";
 
 const app = Express();
 
 app.use(Express.json());
+app.use("/images", Express.static(path.join(__dirname, "images")));
 
 app.use((_, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
