@@ -5,6 +5,7 @@ import multer from "multer";
 import { v4 } from "uuid";
 
 import FeedRouter from "./routes/feed";
+import UserRouter from "./routes/auth";
 
 const app = Express();
 
@@ -37,6 +38,7 @@ app.use((_, res, next) => {
 });
 
 app.use("/feed", FeedRouter);
+app.use("/auth", UserRouter);
 
 mongoose.set("strictQuery", true);
 
