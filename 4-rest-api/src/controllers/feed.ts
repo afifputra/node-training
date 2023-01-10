@@ -14,7 +14,8 @@ const getPosts: RequestHandler = async (req, res, __) => {
     const totalItems = await Post.find().countDocuments();
     const posts = await Post.find()
       .skip((currentPage - 1) * perPage)
-      .limit(perPage);
+      .limit(perPage)
+      .populate("creator");
 
     res.status(200).json({
       message: "Fetched posts successfully.",
@@ -32,7 +33,7 @@ const getPost: RequestHandler<{ postId: string }> = async (req, res, __) => {
   const { postId } = req.params;
 
   try {
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate("creator");
 
     if (!post) {
       return res.status(404).json({
