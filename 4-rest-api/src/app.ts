@@ -7,6 +7,14 @@ import { v4 } from "uuid";
 import FeedRoutes from "./routes/feed";
 import UserRoutes from "./routes/auth";
 
+declare global {
+  namespace Express {
+    interface Request {
+      userId?: string;
+    }
+  }
+}
+
 const app = Express();
 
 const fileStorage = multer.diskStorage({
