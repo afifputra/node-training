@@ -1,9 +1,11 @@
+import * as http from "http";
+import * as socketIo from "socket.io";
 import Express from "express";
+import cors from "cors";
 import mongoose from "mongoose";
 import path from "path";
 import multer from "multer";
 import uuid from "uuid";
-import * as socketio from "socket.io";
 
 import FeedRoutes from "./routes/feed";
 import UserRoutes from "./routes/auth";
@@ -17,6 +19,13 @@ declare global {
 }
 
 const app = Express();
+const server = http.createServer(app);
+const io = new socketIo.Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 const fileStorage = multer.diskStorage({
   destination: (_, __, cb) => {
@@ -39,12 +48,21 @@ app.use(Express.json());
 app.use(multer({ storage: fileStorage, fileFilter }).single("image"));
 app.use("/dist/images", Express.static(path.join(__dirname, "..", "dist", "images")));
 
-app.use((_, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
+// app.use((_, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   next();
+// });
+
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept", "Access-Control-Allow-Origin"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  })
+);
 
 app.use("/feed", FeedRoutes);
 app.use("/auth", UserRoutes);
@@ -55,18 +73,13 @@ mongoose.set("strictQuery", true);
   try {
     await mongoose.connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/messages?retryWrites=true&w=majority");
 
-    const server = app.listen(3003);
-
-    const io = new socketio.Server(server);
-
-    io.on("connection", (socket) => {
+    io.on("connection", (_) => {
       console.log("Client connected");
-      socket.on("disconnect", () => {
-        console.log("Client disconnected");
-      });
     });
 
-    console.log("Server is running on port 3003");
+    server.listen(3003, () => {
+      console.log("Server is running on port 3003");
+    });
   } catch (error) {
     console.log(error);
   }
