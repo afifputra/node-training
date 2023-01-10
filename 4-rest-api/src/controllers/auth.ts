@@ -54,7 +54,49 @@ const login: RequestHandler = async (req, res, _) => {
   }
 };
 
+const getUserStatus: RequestHandler = async (req, res, _) => {
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    return res.status(200).json({ status: user.status });
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+const updateUserStatus: RequestHandler = async (req, res, _) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ message: "Validation failed.", errors: errors.array() });
+  }
+
+  const { status } = req.body;
+
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    user.status = status;
+
+    await user.save();
+
+    return res.status(200).json({ message: "User updated." });
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
 export default {
   register,
   login,
+  getUserStatus,
+  updateUserStatus,
 };

@@ -4,6 +4,8 @@ import { body } from "express-validator";
 import AuthController from "../controllers/auth";
 import User from "../models/user";
 
+import isAuth from "../middleware/is-auth";
+
 const router = Router();
 
 const signUpValidator = [
@@ -27,5 +29,11 @@ router.put("/signup", signUpValidator, AuthController.register);
 
 // POST /auth/login
 router.post("/login", AuthController.login);
+
+// GET /auth/status
+router.get("/status", isAuth, AuthController.getUserStatus);
+
+// PATCH /auth/status
+router.patch("/status", isAuth, AuthController.updateUserStatus);
 
 export default router;
