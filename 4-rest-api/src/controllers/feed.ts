@@ -4,6 +4,7 @@ import { validationResult } from "express-validator";
 import { clearImage } from "../helpers/function";
 
 import Post from "../models/post";
+import User from "../models/user";
 
 const getPosts: RequestHandler = async (req, res, __) => {
   const currentPage: number = req.query.page ? +req.query.page : 1;
@@ -72,20 +73,36 @@ const createPost: RequestHandler = async (req, res, _) => {
     title,
     content,
     imageUrl,
-    creator: {
-      name: "Afif",
-    },
+    creator: req.userId ? req.userId : null,
   });
 
   try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
     await post.save();
+
+    user.posts.push(post._id);
+
+    await user.save();
+
     res.status(201).json({
       message: "Post created successfully!",
-      post,
+      post: post,
+      creator: {
+        _id: user._id,
+        name: user.name,
+      },
     });
   } catch (error) {
+    const { message } = error as Error;
     return res.status(500).json({
-      message: "Creating a post failed!",
+      message: message || "Creating a post failed!",
     });
   }
 };
