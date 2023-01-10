@@ -2,7 +2,8 @@ import Express from "express";
 import mongoose from "mongoose";
 import path from "path";
 import multer from "multer";
-import { v4 } from "uuid";
+import uuid from "uuid";
+import * as socketio from "socket.io";
 
 import FeedRoutes from "./routes/feed";
 import UserRoutes from "./routes/auth";
@@ -22,7 +23,7 @@ const fileStorage = multer.diskStorage({
     cb(null, "dist/images");
   },
   filename: (_, file, cb) => {
-    cb(null, `${v4()}-${file.originalname}`);
+    cb(null, `${uuid.v4()}-${file.originalname}`);
   },
 });
 
@@ -54,7 +55,16 @@ mongoose.set("strictQuery", true);
   try {
     await mongoose.connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/messages?retryWrites=true&w=majority");
 
-    app.listen(3003);
+    const server = app.listen(3003);
+
+    const io = new socketio.Server(server);
+
+    io.on("connection", (socket) => {
+      console.log("Client connected");
+      socket.on("disconnect", () => {
+        console.log("Client disconnected");
+      });
+    });
 
     console.log("Server is running on port 3003");
   } catch (error) {
