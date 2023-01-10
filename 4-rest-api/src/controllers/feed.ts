@@ -141,6 +141,12 @@ const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
       });
     }
 
+    if (post.creator.toString() !== req.userId) {
+      return res.status(403).json({
+        message: "Not authorized!",
+      });
+    }
+
     if (imageUrl !== post.imageUrl) {
       clearImage(post.imageUrl);
     }
@@ -170,6 +176,12 @@ const deletePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
     if (!post) {
       return res.status(404).json({
         message: "Could not find post.",
+      });
+    }
+
+    if (post.creator.toString() !== req.userId) {
+      return res.status(403).json({
+        message: "Not authorized!",
       });
     }
 
