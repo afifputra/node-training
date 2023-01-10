@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 import { hash, compare } from "bcryptjs";
+import { sign } from "jsonwebtoken";
 
 import User from "../models/user";
 
@@ -45,7 +46,9 @@ const login: RequestHandler = async (req, res, _) => {
       return res.status(401).json({ message: "Invalid credentials. Password is incorrect." });
     }
 
-    return res.status(200).json({ message: "Logged in." });
+    const token = sign({ email: user.email, userId: user._id.toString() }, "rimurutempest", { expiresIn: "1h" });
+
+    return res.status(200).json({ message: "Logged in.", token, userId: user._id.toString() });
   } catch (error) {
     return res.status(500).json({ message: "Something went wrong." });
   }
