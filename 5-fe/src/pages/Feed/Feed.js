@@ -40,13 +40,29 @@ class Feed extends Component {
       .catch(this.catchError);
 
     this.loadPosts();
-    openSocket("http://localhost:3003");
+    const socket = openSocket("http://localhost:3003");
+    socket.on("posts", (data) => {
+      console.log(data);
+      switch (data.action) {
+        case "create":
+          this.addPost(data.post);
+          break;
+        case "update":
+          this.updatePost(data.post);
+          break;
+        case "delete":
+          this.loadPosts();
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   addPost = (post) => {
     this.setState((prevState) => {
       const updatedPosts = [...prevState.posts];
-      if (prevState.posts.length >= 2) {
+      if (prevState.posts.length === 1) {
         updatedPosts.pop();
         updatedPosts.unshift(post);
       }
@@ -176,8 +192,6 @@ class Feed extends Component {
           if (prevState.editPost) {
             const postIndex = prevState.posts.findIndex((p) => p._id === prevState.editPost._id);
             updatedPosts[postIndex] = post;
-          } else if (prevState.posts.length < 2) {
-            updatedPosts = [post, ...prevState.posts];
           }
           return {
             posts: updatedPosts,

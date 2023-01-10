@@ -1,11 +1,12 @@
 import * as http from "http";
-import * as socketIo from "socket.io";
+// import * as socketIo from "socket.io";
 import Express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import path from "path";
 import multer from "multer";
-import uuid from "uuid";
+import { v4 } from "uuid";
+import socket from "./socket";
 
 import FeedRoutes from "./routes/feed";
 import UserRoutes from "./routes/auth";
@@ -20,19 +21,19 @@ declare global {
 
 const app = Express();
 const server = http.createServer(app);
-const io = new socketIo.Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
+// const io = new socketIo.Server(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"],
+//   },
+// });
 
 const fileStorage = multer.diskStorage({
   destination: (_, __, cb) => {
     cb(null, "dist/images");
   },
   filename: (_, file, cb) => {
-    cb(null, `${uuid.v4()}-${file.originalname}`);
+    cb(null, `${v4()}-${file.originalname}`);
   },
 });
 
@@ -73,10 +74,10 @@ mongoose.set("strictQuery", true);
   try {
     await mongoose.connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/messages?retryWrites=true&w=majority");
 
-    io.on("connection", (_) => {
-      console.log("Client connected");
-    });
-
+    // io.on("connection", (_) => {
+    //   console.log("Client connected");
+    // });
+    socket.init(server);
     server.listen(3003, () => {
       console.log("Server is running on port 3003");
     });
