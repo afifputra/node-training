@@ -187,6 +187,7 @@ const deletePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
 
     clearImage(post.imageUrl);
     await Post.findByIdAndRemove(postId);
+    await User.updateOne({ _id: req.userId }, { $pull: { posts: postId } }, { multi: true });
 
     res.status(200).json({
       message: "Deleted post.",
