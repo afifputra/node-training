@@ -25,4 +25,7 @@ const signUpValidator = [
 // PUT /auth/signup
 router.put("/signup", signUpValidator, AuthController.register);
 
+// POST /auth/login
+router.post("/login", AuthController.login);
+
 export default router;
