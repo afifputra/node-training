@@ -42,7 +42,6 @@ class Feed extends Component {
     this.loadPosts();
     const socket = openSocket("http://localhost:3003");
     socket.on("posts", (data) => {
-      console.log(data);
       switch (data.action) {
         case "create":
           this.addPost(data.post);
@@ -69,6 +68,17 @@ class Feed extends Component {
       return {
         posts: updatedPosts,
         totalPosts: prevState.totalPosts + 1,
+      };
+    });
+  };
+
+  updatePost = (post) => {
+    this.setState((prevState) => {
+      const updatedPosts = [...prevState.posts];
+      const updatedPostIndex = updatedPosts.findIndex((p) => p._id === post._id);
+      updatedPosts[updatedPostIndex] = post;
+      return {
+        posts: updatedPosts,
       };
     });
   };

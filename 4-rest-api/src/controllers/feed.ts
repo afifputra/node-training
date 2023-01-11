@@ -124,6 +124,7 @@ const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
     });
   }
 
+  const io = Socket.getIO();
   const { postId } = req.params;
   const { title, content } = req.body;
   let imageUrl = req.body.image;
@@ -161,6 +162,8 @@ const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
     post.imageUrl = imageUrl;
     post.content = content;
     const result = await post.save();
+
+    io.emit("posts", { action: "update", post: result });
 
     res.status(200).json({
       message: "Post updated!",
