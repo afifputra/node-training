@@ -16,6 +16,7 @@ const getPosts: RequestHandler = async (req, res, __) => {
     const totalItems = await Post.find().countDocuments();
     const posts = await Post.find()
       .skip((currentPage - 1) * perPage)
+      .sort({ createdAt: -1 })
       .limit(perPage)
       .populate("creator");
 
