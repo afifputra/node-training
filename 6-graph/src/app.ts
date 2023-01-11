@@ -5,6 +5,10 @@ import mongoose from "mongoose";
 import path from "path";
 import multer from "multer";
 import { v4 } from "uuid";
+import { graphqlHTTP } from "express-graphql";
+
+import graphqlSchema from "./graphql/schema";
+import graphqlResolvers from "./graphql/resolvers";
 
 declare global {
   namespace Express {
@@ -38,13 +42,6 @@ app.use(Express.json());
 app.use(multer({ storage: fileStorage, fileFilter }).single("image"));
 app.use("/dist/images", Express.static(path.join(__dirname, "..", "dist", "images")));
 
-// app.use((_, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
-//   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//   next();
-// });
-
 app.use(
   cors({
     origin: "*",
@@ -54,8 +51,14 @@ app.use(
   })
 );
 
-app.use("/feed", FeedRoutes);
-app.use("/auth", UserRoutes);
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolvers,
+    graphiql: true,
+  })
+);
 
 mongoose.set("strictQuery", true);
 
@@ -63,10 +66,6 @@ mongoose.set("strictQuery", true);
   try {
     await mongoose.connect("mongodb+srv://web-app:online123@cluster0.5fapyff.mongodb.net/messages?retryWrites=true&w=majority");
 
-    // io.on("connection", (_) => {
-    //   console.log("Client connected");
-    // });
-    socket.init(server);
     server.listen(3003, () => {
       console.log("Server is running on port 3003");
     });

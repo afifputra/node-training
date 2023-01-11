@@ -5,8 +5,6 @@ import { clearImage } from "../helpers/function";
 
 import Post from "../models/post";
 import User from "../models/user";
-import Socket from "../socket";
-import { DocumentSetOptions } from "mongoose";
 
 const getPosts: RequestHandler = async (req, res, __) => {
   const currentPage: number = req.query.page ? +req.query.page : 1;
@@ -70,7 +68,6 @@ const createPost: RequestHandler = async (req, res, _) => {
     });
   }
 
-  const io = Socket.getIO();
   const imageUrl = req.file.path.replace(/\\/g, "/");
   const { title, content } = req.body;
 
@@ -80,7 +77,6 @@ const createPost: RequestHandler = async (req, res, _) => {
     imageUrl,
     creator: req.userId ? req.userId : null,
   });
-  const postDoc: DocumentSetOptions = post;
 
   try {
     const user = await User.findById(req.userId);
@@ -96,8 +92,6 @@ const createPost: RequestHandler = async (req, res, _) => {
     user.posts.push(post._id);
 
     await user.save();
-
-    io.emit("posts", { action: "create", post: { ...postDoc._doc, creator: { _id: user._id, name: user.name } } });
 
     res.status(201).json({
       message: "Post created successfully!",
@@ -125,7 +119,6 @@ const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
     });
   }
 
-  const io = Socket.getIO();
   const { postId } = req.params;
   const { title, content } = req.body;
   let imageUrl = req.body.image;
@@ -164,8 +157,6 @@ const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
     post.content = content;
     const result = await post.save();
 
-    io.emit("posts", { action: "update", post: result });
-
     res.status(200).json({
       message: "Post updated!",
       post: result,
@@ -178,7 +169,6 @@ const updatePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
 };
 
 const deletePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
-  const io = Socket.getIO();
   const { postId } = req.params;
 
   try {
@@ -199,8 +189,6 @@ const deletePost: RequestHandler<{ postId: string }> = async (req, res, _) => {
     clearImage(post.imageUrl);
     await Post.findByIdAndRemove(postId);
     await User.updateOne({ _id: req.userId }, { $pull: { posts: postId } }, { multi: true });
-
-    io.emit("posts", { action: "delete", post: postId });
 
     res.status(200).json({
       message: "Deleted post.",
