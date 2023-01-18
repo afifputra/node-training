@@ -1,6 +1,7 @@
 import User from "../models/user";
 import bcrypt from "bcryptjs";
 import validator from "validator";
+import jwt from "jsonwebtoken";
 
 const createUser = async (
   {
@@ -60,8 +61,52 @@ const createUser = async (
   };
 };
 
+const login = async (
+  {
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  },
+  __: any
+) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    const error = new Error("User not found.");
+    error.code = 401;
+    throw error;
+  }
+
+  const isEqual = await bcrypt.compare(password, user.password);
+
+  if (!isEqual) {
+    const error = new Error("Password is incorrect.");
+    error.code = 401;
+    throw error;
+  }
+
+  const token = jwt.sign(
+    {
+      userId: user._id.toString(),
+      email: user.email,
+    },
+    "rimurutempest",
+    {
+      expiresIn: "1h",
+    }
+  );
+
+  return {
+    token,
+    userId: user._id.toString(),
+  };
+};
+
 const resolvers = {
   createUser,
+  login,
 };
 
 export default resolvers;

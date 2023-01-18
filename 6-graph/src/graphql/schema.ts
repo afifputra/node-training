@@ -11,6 +11,11 @@ const schema = buildSchema(`
         updatedAt: String!
     }
 
+    type AUthData {
+        token: String!
+        userId: String!
+    }
+
     type User {
         _id: ID!
         email: String!
@@ -27,7 +32,7 @@ const schema = buildSchema(`
     }
 
     type RootQuery {
-        hello: String!
+        login(email: String!, password: String!): AUthData!
     }
 
     type RootMutation {
