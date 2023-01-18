@@ -52,7 +52,7 @@ app.use(
     origin: "*",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST"],
   })
 );
 

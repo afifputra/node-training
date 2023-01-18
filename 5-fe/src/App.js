@@ -106,28 +106,34 @@ class App extends Component {
   signupHandler = (event, authData) => {
     event.preventDefault();
     this.setState({ authLoading: true });
-    fetch("http://localhost:3003/auth/signup", {
-      method: "PUT",
-      body: JSON.stringify({
-        email: authData.signupForm.email.value,
-        password: authData.signupForm.password.value,
-        name: authData.signupForm.name.value,
-      }),
+    const graphqlQuery = {
+      query: `
+      mutation {
+        createUser(userInput:{ email: "${authData.signupForm.email.value}", name: "${authData.signupForm.name.value}", password: "${authData.signupForm.password.value}" }) {
+          _id,
+          email,
+          name
+        }
+      }
+      `,
+    };
+    fetch("http://localhost:3003/graphql", {
+      method: "POST",
+      body: JSON.stringify(graphqlQuery),
       headers: {
         "Content-Type": "application/json",
       },
     })
       .then((res) => {
-        if (res.status === 422) {
-          throw new Error("Validation failed. Make sure the email address isn't used yet!");
-        }
-        if (res.status !== 200 && res.status !== 201) {
-          console.log("Error!");
-          throw new Error("Creating a user failed!");
-        }
         return res.json();
       })
       .then((resData) => {
+        if (resData.errors && resData.errors[0].status === 422) {
+          throw new Error("Validation failed.");
+        }
+        if (resData.errors) {
+          throw new Error("User creation failed!");
+        }
         console.log(resData);
         this.setState({ isAuth: false, authLoading: false });
         this.props.history.replace("/");
