@@ -58,11 +58,18 @@ class App extends Component {
   loginHandler = (event, authData) => {
     event.preventDefault();
     this.setState({ authLoading: true });
-    fetch("http://localhost:3003/auth/login", {
+    const graphqlQuery = `
+      query {
+        login(email: "${authData.email}", password: "${authData.password}") {
+          token,
+          userId
+        }
+      }
+    `;
+    fetch("http://localhost:3003/graphql", {
       method: "POST",
       body: JSON.stringify({
-        email: authData.email,
-        password: authData.password,
+        query: graphqlQuery,
       }),
       headers: {
         "Content-Type": "application/json",
