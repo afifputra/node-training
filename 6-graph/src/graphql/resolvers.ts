@@ -118,16 +118,7 @@ const createPost = async ({ postInput }: { postInput: PostInput }, req: Request)
     throw error;
   }
 
-  const post = new Post({
-    title,
-    content,
-    imageUrl,
-    creator: userId,
-  });
-
-  const createdPost = await post.save();
-
-  const user = await User.findById(userId);
+  const user = await User.findById(userId); // Get the user from the database
 
   if (!user) {
     const error = new Error("Invalid user.");
@@ -135,9 +126,20 @@ const createPost = async ({ postInput }: { postInput: PostInput }, req: Request)
     throw error;
   }
 
-  user.posts.push(createdPost._id);
+  const post = new Post({
+    title,
+    content,
+    imageUrl,
+    creator: userId,
+  });
 
-  await user.save();
+  const createdPost = await post.save(); // Save the post to the database
+
+  user.posts.push(createdPost._id); // Add the post to the user's posts
+
+  const userWithSomePost = await user.save(); // Save the user to the database
+
+  const { password, ...restUser } = userWithSomePost.toJSON(); // Remove the password from the user
 
   const finalPost = {
     ...createdPost.toJSON(),
@@ -145,7 +147,7 @@ const createPost = async ({ postInput }: { postInput: PostInput }, req: Request)
     createdAt: createdPost.createdAt.toISOString(),
     updatedAt: createdPost.updatedAt.toISOString(),
     creator: {
-      name: user.name,
+      ...restUser,
     },
   };
 

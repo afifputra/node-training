@@ -189,10 +189,6 @@ class Feed extends Component {
 
     let url = "http://localhost:3003/graphql";
     let method = "POST";
-    if (this.state.editPost) {
-      url = "http://localhost:3003/feed/post/" + this.state.editPost._id;
-      method = "PUT";
-    }
 
     fetch(url, {
       method,
