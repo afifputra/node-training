@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import validator from "validator";
 import jwt from "jsonwebtoken";
 
-import Post, { IPost, PostInput } from "../models/post";
+import Post, { PostInput } from "../models/post";
 import User, { UserInput } from "../models/user";
 
 const createUser = async ({ userInput }: { userInput: UserInput }, __: Request) => {
@@ -125,14 +125,31 @@ const createPost = async ({ postInput }: { postInput: PostInput }, req: Request)
     creator: userId,
   });
 
-  const createdPost = (await (await post.save()).populate("creator", "name")).toJSON() as IPost;
+  const createdPost = await post.save();
 
-  return {
-    ...createdPost,
+  const user = await User.findById(userId);
+
+  if (!user) {
+    const error = new Error("Invalid user.");
+    error.code = 401;
+    throw error;
+  }
+
+  user.posts.push(createdPost._id);
+
+  await user.save();
+
+  const finalPost = {
+    ...createdPost.toJSON(),
     _id: createdPost._id.toString(),
     createdAt: createdPost.createdAt.toISOString(),
     updatedAt: createdPost.updatedAt.toISOString(),
+    creator: {
+      name: user.name,
+    },
   };
+
+  return finalPost;
 };
 
 // const updatePost = async ({ postInput }: IPost, req: Request) => {
