@@ -87,6 +87,29 @@ const login = async ({ email, password }: { email: string; password: string }, _
   };
 };
 
+const getPosts = async (_: any, req: Request) => {
+  if (!req.isAuth) {
+    const error = new Error("Not authenticated.");
+    error.code = 401;
+    throw error;
+  }
+  const posts = await Post.find().populate("creator", "-password");
+  const totalItems = await Post.find().countDocuments();
+  const finalPosts = posts.map((post) => {
+    return {
+      ...post.toJSON(),
+      _id: post._id.toString(),
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt.toISOString(),
+    };
+  });
+
+  return {
+    posts: finalPosts,
+    totalPosts: totalItems,
+  };
+};
+
 const createPost = async ({ postInput }: { postInput: PostInput }, req: Request) => {
   if (!req.isAuth) {
     const error = new Error("Not authenticated.");
@@ -164,6 +187,7 @@ const resolvers = {
   createUser,
   login,
   createPost,
+  getPosts,
   // updatePost,
   // deletePost,
 };

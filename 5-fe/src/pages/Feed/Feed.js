@@ -86,6 +86,23 @@ class Feed extends Component {
   // };
 
   loadPosts = (direction) => {
+    const graphqlQuery = {
+      query: ` {
+        getPosts {
+          posts {
+            _id
+            title
+            content
+            imageUrl
+            creator {
+              name
+            }
+            createdAt
+          }
+          totalPosts
+        }
+      }`,
+    };
     if (direction) {
       this.setState({ postsLoading: true, posts: [] });
     }
@@ -98,9 +115,12 @@ class Feed extends Component {
       page--;
       this.setState({ postPage: page });
     }
-    fetch(`http://localhost:3003/feed/posts?page=${page}`, {
+    fetch(`http://localhost:3003/graphql`, {
+      method: "POST",
+      body: JSON.stringify(graphqlQuery),
       headers: {
         Authorization: `Bearer ${this.props.token}`,
+        "Content-Type": "application/json",
       },
     })
       .then((res) => {
@@ -111,8 +131,8 @@ class Feed extends Component {
       })
       .then((resData) => {
         this.setState({
-          posts: resData.posts,
-          totalPosts: resData.totalItems,
+          posts: resData.data.getPosts.posts,
+          totalPosts: resData.data.getPosts.totalPosts,
           postsLoading: false,
         });
       })
