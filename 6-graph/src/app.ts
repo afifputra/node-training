@@ -10,10 +10,13 @@ import { graphqlHTTP } from "express-graphql";
 import graphqlSchema from "./graphql/schema";
 import graphqlResolvers from "./graphql/resolvers";
 
+import Auth from "./middleware/auth";
+
 declare global {
   namespace Express {
     interface Request {
       userId?: string;
+      isAuth?: boolean;
     }
   }
 
@@ -55,6 +58,8 @@ app.use(
     methods: ["GET", "POST"],
   })
 );
+
+app.use(Auth); // Auth middleware
 
 app.use(
   "/graphql",

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { body } from "express-validator";
 
 import FeedController from "../controllers/feed";
-import isAuth from "../middleware/is-auth";
+import isAuth from "../middleware/auth";
 
 const router = Router();
 

@@ -4,7 +4,7 @@ import { body } from "express-validator";
 import AuthController from "../controllers/auth";
 import User from "../models/user";
 
-import isAuth from "../middleware/is-auth";
+import isAuth from "../middleware/auth";
 
 const router = Router();
 

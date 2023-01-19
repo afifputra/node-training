@@ -1,22 +1,12 @@
+import { Request } from "express";
 import bcrypt from "bcryptjs";
 import validator from "validator";
 import jwt from "jsonwebtoken";
 
-import Post from "../models/post";
-import User from "../models/user";
+import Post, { IPost, PostInput } from "../models/post";
+import User, { UserInput } from "../models/user";
 
-const createUser = async (
-  {
-    userInput,
-  }: {
-    userInput: {
-      email: string;
-      password: string;
-      name: string;
-    };
-  },
-  __: any
-) => {
+const createUser = async ({ userInput }: { userInput: UserInput }, __: Request) => {
   const errors: { message: string }[] = [];
   const { email, name, password } = userInput;
 
@@ -63,16 +53,7 @@ const createUser = async (
   };
 };
 
-const login = async (
-  {
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  },
-  __: any
-) => {
+const login = async ({ email, password }: { email: string; password: string }, __: Request) => {
   const user = await User.findOne({ email });
 
   if (!user) {
@@ -106,43 +87,14 @@ const login = async (
   };
 };
 
-const createPost = async (
-  {
-    postInput,
-  }: {
-    postInput: {
-      title: string;
-      content: string;
-      imageUrl: string;
-    };
-  },
-  req: any
-) => {
-  const authHeader = req.get("Authorization");
-
-  if (!authHeader) {
+const createPost = async ({ postInput }: { postInput: PostInput }, req: Request) => {
+  if (!req.isAuth) {
     const error = new Error("Not authenticated.");
     error.code = 401;
     throw error;
   }
 
-  const token = authHeader.split(" ")[1];
-
-  let decodedToken;
-
-  try {
-    decodedToken = jwt.verify(token, "rimurutempest") as { userId: string };
-  } catch (error) {
-    throw error;
-  }
-
-  if (!decodedToken) {
-    const error = new Error("Not authenticated.");
-    error.code = 401;
-    throw error;
-  }
-
-  const userId = decodedToken.userId;
+  const { userId } = req;
 
   const errors: { message: string }[] = [];
   const { title, content, imageUrl } = postInput;
@@ -173,19 +125,28 @@ const createPost = async (
     creator: userId,
   });
 
-  const createdPost = (await (await post.save()).populate("creator", "name")).toJSON();
+  const createdPost = (await (await post.save()).populate("creator", "name")).toJSON() as IPost;
 
   return {
     ...createdPost,
     _id: createdPost._id.toString(),
     createdAt: createdPost.createdAt.toISOString(),
+    updatedAt: createdPost.updatedAt.toISOString(),
   };
 };
+
+// const updatePost = async ({ postInput }: IPost, req: Request) => {
+
+// }
+
+// const deletePost = async () => {}
 
 const resolvers = {
   createUser,
   login,
   createPost,
+  // updatePost,
+  // deletePost,
 };
 
 export default resolvers;
