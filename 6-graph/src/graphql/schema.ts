@@ -44,7 +44,7 @@ const schema = buildSchema(`
 
     type RootQuery {
         login(email: String!, password: String!): AUthData!
-        getPosts: PostData!
+        getPosts(page: Int!): PostData!
         getPost(id: ID!): Post!
     }
 

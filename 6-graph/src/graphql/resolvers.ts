@@ -87,13 +87,19 @@ const login = async ({ email, password }: { email: string; password: string }, _
   };
 };
 
-const getPosts = async (_: any, req: Request) => {
+const getPosts = async ({ page }: { page: number }, req: Request) => {
   if (!req.isAuth) {
     const error = new Error("Not authenticated.");
     error.code = 401;
     throw error;
   }
-  const posts = await Post.find().populate("creator", "-password");
+  if (!page) page = 1;
+  const perPage = 2;
+  const posts = await Post.find()
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * perPage)
+    .limit(perPage)
+    .populate("creator", "-password");
   const totalItems = await Post.find().countDocuments();
   const finalPosts = posts.map((post) => {
     return {
