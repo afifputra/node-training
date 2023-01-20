@@ -93,7 +93,6 @@ class Feed extends Component {
             _id
             title
             content
-            imageUrl
             creator {
               name
             }
@@ -130,6 +129,9 @@ class Feed extends Component {
         return res.json();
       })
       .then((resData) => {
+        if (resData.errors) {
+          throw new Error("Fetching post failed!");
+        }
         this.setState({
           posts: resData.data.getPosts.posts,
           totalPosts: resData.data.getPosts.totalPosts,
@@ -228,7 +230,6 @@ class Feed extends Component {
         if (resData.errors) {
           throw new Error("Creating or editing a post failed");
         }
-        console.log(resData);
         const post = {
           _id: resData.data.createPost._id,
           title: resData.data.createPost.title,
@@ -241,6 +242,8 @@ class Feed extends Component {
           if (prevState.editPost) {
             const postIndex = prevState.posts.findIndex((p) => p._id === prevState.editPost._id);
             updatedPosts[postIndex] = post;
+          } else {
+            updatedPosts.unshift(post);
           }
           return {
             posts: updatedPosts,
