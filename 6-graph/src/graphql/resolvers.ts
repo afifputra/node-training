@@ -116,6 +116,31 @@ const getPosts = async ({ page }: { page: number }, req: Request) => {
   };
 };
 
+const getPost = async ({ id }: { id: string }, req: Request) => {
+  if (!req.isAuth) {
+    const error = new Error("Not authenticated.");
+    error.code = 401;
+    throw error;
+  }
+
+  const post = await Post.findById(id).populate("creator", "-password");
+
+  if (!post) {
+    const error = new Error("No post found!");
+    error.code = 404;
+    throw error;
+  }
+
+  const finalPost = {
+    ...post.toJSON(),
+    _id: post._id.toString(),
+    createdAt: post.createdAt.toISOString(),
+    updatedAt: post.updatedAt.toISOString(),
+  };
+
+  return finalPost;
+};
+
 const createPost = async ({ postInput }: { postInput: PostInput }, req: Request) => {
   if (!req.isAuth) {
     const error = new Error("Not authenticated.");
@@ -194,6 +219,7 @@ const resolvers = {
   login,
   createPost,
   getPosts,
+  getPost,
   // updatePost,
   // deletePost,
 };
