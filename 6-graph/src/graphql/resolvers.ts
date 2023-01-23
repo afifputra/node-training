@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 import Post, { PostInput } from "../models/post";
 import User, { UserInput } from "../models/user";
 
+import { clearImage } from "../helpers/function";
+
 const createUser = async ({ userInput }: { userInput: UserInput }, __: Request) => {
   const errors: { message: string }[] = [];
   const { email, name, password } = userInput;
@@ -212,7 +214,42 @@ const createPost = async ({ postInput }: { postInput: PostInput }, req: Request)
 
 // }
 
-// const deletePost = async () => {}
+const deletePost = async ({ id }: { id: string }, req: Request) => {
+  if (!req.isAuth) {
+    const error = new Error("Not authenticated.");
+    error.code = 401;
+    throw error;
+  }
+
+  const post = await Post.findById(id);
+  const { userId } = req;
+
+  if (!post) {
+    const error = new Error("No post found!");
+    error.code = 404;
+    throw error;
+  }
+
+  if (post.creator.toString() !== userId) {
+    const error = new Error("Not authorized!");
+    error.code = 403;
+    throw error;
+  }
+
+  try {
+    clearImage(post.imageUrl);
+
+    await Post.findByIdAndRemove(id);
+
+    await User.updateOne({ _id: userId }, { $pull: { posts: id } });
+
+    return true;
+  } catch (err) {
+    const error = new Error("Something went wrong!");
+    error.code = 500;
+    throw error;
+  }
+};
 
 const resolvers = {
   createUser,
@@ -221,7 +258,7 @@ const resolvers = {
   getPosts,
   getPost,
   // updatePost,
-  // deletePost,
+  deletePost,
 };
 
 export default resolvers;
