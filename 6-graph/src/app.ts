@@ -64,6 +64,7 @@ app.use(
 app.use(Auth); // Auth middleware
 
 app.put("/post-image", (req, res, _) => {
+  console.log(req.body);
   if (!req.isAuth) {
     return res.status(403).json({ message: "Not authenticated!" });
   }

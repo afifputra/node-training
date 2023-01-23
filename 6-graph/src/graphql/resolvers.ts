@@ -210,9 +210,71 @@ const createPost = async ({ postInput }: { postInput: PostInput }, req: Request)
   return finalPost;
 };
 
-// const updatePost = async ({ postInput }: IPost, req: Request) => {
+const updatePost = async ({ id, postInput }: { id: string; postInput: PostInput }, req: Request) => {
+  console.log(postInput);
+  if (!req.isAuth) {
+    const error = new Error("Not authenticated.");
+    error.code = 401;
+    throw error;
+  }
 
-// }
+  const { userId } = req;
+
+  const errors: { message: string }[] = [];
+
+  const { title, content, imageUrl } = postInput;
+
+  if (validator.isEmpty(title) || !validator.isLength(title, { min: 5 })) {
+    errors.push({
+      message: "Title is invalid.",
+    });
+  }
+
+  if (validator.isEmpty(content) || !validator.isLength(content, { min: 5 })) {
+    errors.push({
+      message: "Content is invalid.",
+    });
+  }
+
+  if (errors.length > 0) {
+    const error = new Error("Invalid input.");
+    error.data = errors;
+    error.code = 422;
+    throw error;
+  }
+
+  const post = await Post.findById(id).populate("creator", "-password");
+
+  if (!post) {
+    const error = new Error("No post found!");
+    error.code = 404;
+    throw error;
+  }
+
+  if (post.creator._id.toString() !== userId) {
+    const error = new Error("Not authorized!");
+    error.code = 403;
+    throw error;
+  }
+
+  post.title = title;
+  post.content = content;
+
+  if (imageUrl !== "undefined") {
+    post.imageUrl = imageUrl;
+  }
+
+  const updatedPost = await post.save();
+
+  const finalPost = {
+    ...updatedPost.toJSON(),
+    _id: updatedPost._id.toString(),
+    createdAt: updatedPost.createdAt.toISOString(),
+    updatedAt: updatedPost.updatedAt.toISOString(),
+  };
+
+  return finalPost;
+};
 
 const deletePost = async ({ id }: { id: string }, req: Request) => {
   if (!req.isAuth) {
@@ -257,7 +319,7 @@ const resolvers = {
   createPost,
   getPosts,
   getPost,
-  // updatePost,
+  updatePost,
   deletePost,
 };
 

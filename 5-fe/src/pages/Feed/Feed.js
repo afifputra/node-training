@@ -105,6 +105,7 @@ class Feed extends Component {
             _id
             title
             content
+            imageUrl
             creator {
               name
             }
@@ -206,7 +207,6 @@ class Feed extends Component {
         return res.json();
       })
       .then((fileResData) => {
-        console.log(this.state.editPost);
         const imageUrl = fileResData.filePath || "undefined";
         let graphqlQuery = {
           query: `
