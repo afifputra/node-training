@@ -188,80 +188,188 @@ class Feed extends Component {
     this.setState({
       editLoading: true,
     });
-    // const formData = new FormData();
-    // formData.append("title", postData.title);
-    // formData.append("content", postData.content);
-    // formData.append("image", postData.image || this.state.editPost.imageUrl);
+    const formData = new FormData();
+    formData.append("image", postData.image || this.state.editPost.imageUrl);
 
-    const graphqlQuery = {
-      query: `
-        mutation {
-          createPost(postInput: { title: "${postData.title}", content: "${postData.content}", imageUrl: "asdasdasd" }) {
-            _id
-            title
-            content
-            creator {
-              name
-            }
-            createdAt
-          }
-        }
-      `,
-    };
+    if (this.state.editPost) {
+      formData.append("oldPath", this.state.editPost.imageUrl);
+    }
 
-    let url = "http://localhost:3003/graphql";
-    let method = "POST";
-
-    fetch(url, {
-      method,
-      body: JSON.stringify(graphqlQuery),
+    fetch("http://localhost:3003/post-image", {
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${this.props.token}`,
-        "Content-Type": "application/json",
       },
+      body: formData,
     })
       .then((res) => {
         return res.json();
       })
-      .then((resData) => {
-        if (resData.errors && resData.errors[0].status === 422) {
-          throw new Error("Validation failed.");
-        }
-        if (resData.errors) {
-          throw new Error("Creating or editing a post failed");
-        }
-        const post = {
-          _id: resData.data.createPost._id,
-          title: resData.data.createPost.title,
-          content: resData.data.createPost.content,
-          creator: resData.data.createPost.creator,
-          createdAt: resData.data.createPost.createdAt,
-        };
-        this.setState((prevState) => {
-          let updatedPosts = [...prevState.posts];
-          if (prevState.editPost) {
-            const postIndex = prevState.posts.findIndex((p) => p._id === prevState.editPost._id);
-            updatedPosts[postIndex] = post;
-          } else {
-            updatedPosts.pop();
-            updatedPosts.unshift(post);
+      .then((fileResData) => {
+        console.log(this.state.editPost);
+        const imageUrl = fileResData.filePath || "undefined";
+        let graphqlQuery = {
+          query: `
+          mutation {
+            createPost(postInput: { title: "${postData.title}", content: "${postData.content}", imageUrl: "${imageUrl}" }) {
+              _id
+              title
+              content
+              creator {
+                name
+              }
+              createdAt
+            }
           }
-          return {
-            posts: updatedPosts,
-            isEditing: false,
-            editPost: null,
-            editLoading: false,
+        `,
+        };
+
+        if (this.state.editPost) {
+          graphqlQuery = {
+            query: `
+            mutation {
+              updatePost(id: "${this.state.editPost._id}", postInput: { title: "${postData.title}", content: "${postData.content}", imageUrl: "${imageUrl}" }) {
+                _id
+                title
+                content
+                creator {
+                  name
+                }
+                createdAt
+              }
+            }
+          `,
           };
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          isEditing: false,
-          editPost: null,
-          editLoading: false,
-          error: err,
-        });
+        }
+
+        return fetch("http://localhost:3003/graphql", {
+          method: "POST",
+          body: JSON.stringify(graphqlQuery),
+          headers: {
+            Authorization: `Bearer ${this.props.token}`,
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((resData) => {
+            if (resData.errors && resData.errors[0].status === 422) {
+              throw new Error("Validation failed.");
+            }
+            if (resData.errors) {
+              throw new Error("User logged in failed!");
+            }
+            console.log(resData);
+            let resDataField = "createPost";
+            if (this.state.editPost) {
+              resDataField = "updatePost";
+            }
+            const post = {
+              _id: resData.data[resDataField]._id,
+              title: resData.data[resDataField].title,
+              content: resData.data[resDataField].content,
+              creator: resData.data[resDataField].creator,
+              createdAt: resData.data[resDataField].createdAt,
+              imageUrl: imageUrl,
+            };
+            this.setState((prevState) => {
+              let updatedPosts = [...prevState.posts];
+              if (prevState.editPost) {
+                const postIndex = prevState.posts.findIndex((p) => p._id === prevState.editPost._id);
+                updatedPosts[postIndex] = post;
+              } else {
+                updatedPosts.pop();
+                updatedPosts.unshift(post);
+              }
+              return {
+                posts: updatedPosts,
+                isEditing: false,
+                editPost: null,
+                editLoading: false,
+              };
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            this.setState({
+              isEditing: false,
+              editPost: null,
+              editLoading: false,
+            });
+          });
       });
+
+    // const graphqlQuery = {
+    //   query: `
+    //     mutation {
+    //       createPost(postInput: { title: "${postData.title}", content: "${postData.content}", imageUrl: "asdasdasd" }) {
+    //         _id
+    //         title
+    //         content
+    //         creator {
+    //           name
+    //         }
+    //         createdAt
+    //       }
+    //     }
+    //   `,
+    // };
+
+    // let url = "http://localhost:3003/graphql";
+    // let method = "POST";
+
+    // fetch(url, {
+    //   method,
+    //   body: JSON.stringify(graphqlQuery),
+    //   headers: {
+    //     Authorization: `Bearer ${this.props.token}`,
+    //     "Content-Type": "application/json",
+    //   },
+    // })
+    //   .then((res) => {
+    //     return res.json();
+    //   })
+    //   .then((resData) => {
+    //     if (resData.errors && resData.errors[0].status === 422) {
+    //       throw new Error("Validation failed.");
+    //     }
+    //     if (resData.errors) {
+    //       throw new Error("Creating or editing a post failed");
+    //     }
+    //     const post = {
+    //       _id: resData.data.createPost._id,
+    //       title: resData.data.createPost.title,
+    //       content: resData.data.createPost.content,
+    //       creator: resData.data.createPost.creator,
+    //       createdAt: resData.data.createPost.createdAt,
+    //       imagePath: resData.data.createPost.imageUrl,
+    //     };
+    //     this.setState((prevState) => {
+    //       let updatedPosts = [...prevState.posts];
+    //       if (prevState.editPost) {
+    //         const postIndex = prevState.posts.findIndex((p) => p._id === prevState.editPost._id);
+    //         updatedPosts[postIndex] = post;
+    //       } else {
+    //         updatedPosts.pop();
+    //         updatedPosts.unshift(post);
+    //       }
+    //       return {
+    //         posts: updatedPosts,
+    //         isEditing: false,
+    //         editPost: null,
+    //         editLoading: false,
+    //       };
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     this.setState({
+    //       isEditing: false,
+    //       editPost: null,
+    //       editLoading: false,
+    //       error: err,
+    //     });
+    //   });
   };
 
   statusInputChangeHandler = (input, value) => {

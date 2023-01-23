@@ -12,6 +12,8 @@ import graphqlResolvers from "./graphql/resolvers";
 
 import Auth from "./middleware/auth";
 
+import { clearImage } from "./helpers/function";
+
 declare global {
   namespace Express {
     interface Request {
@@ -55,11 +57,24 @@ app.use(
     origin: "*",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT"],
   })
 );
 
 app.use(Auth); // Auth middleware
+
+app.put("/post-image", (req, res, _) => {
+  if (!req.isAuth) {
+    return res.status(403).json({ message: "Not authenticated!" });
+  }
+  if (!req.file) {
+    return res.status(200).json({ message: "No file provided!" });
+  }
+  if (req.body.oldPath) {
+    clearImage(req.body.oldPath);
+  }
+  return res.status(201).json({ message: "File stored.", filePath: req.file.path.replace(/\\/g, "/") });
+});
 
 app.use(
   "/graphql",
