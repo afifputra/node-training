@@ -4,7 +4,8 @@
   "description": "try to make rest api",
   "main": "app.js",
   "scripts": {
-    "dev": "concurrently \"tsc -w\" \"nodemon dist/app.js\""
+    "dev": "concurrently \"tsc -w\" \"nodemon dist/app.js\"",
+    "build": "tsc -p ."
   },
   "author": "",
   "license": "ISC",
