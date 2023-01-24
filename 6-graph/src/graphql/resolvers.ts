@@ -313,6 +313,30 @@ const deletePost = async ({ id }: { id: string }, req: Request) => {
   }
 };
 
+const user = async (_: any, req: Request) => {
+  if (!req.isAuth) {
+    const error = new Error("Not authenticated.");
+    error.code = 401;
+    throw error;
+  }
+
+  const { userId } = req;
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    const error = new Error("No user found!");
+    error.code = 404;
+    throw error;
+  }
+
+  const { password, ...restUser } = user.toJSON();
+
+  return {
+    ...restUser,
+  };
+};
+
 const resolvers = {
   createUser,
   login,
@@ -321,6 +345,7 @@ const resolvers = {
   getPost,
   updatePost,
   deletePost,
+  user,
 };
 
 export default resolvers;

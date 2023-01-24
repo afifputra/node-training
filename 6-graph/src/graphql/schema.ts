@@ -46,6 +46,7 @@ const schema = buildSchema(`
         login(email: String!, password: String!): AUthData!
         getPosts(page: Int!): PostData!
         getPost(id: ID!): Post!
+        user: User!
     }
 
     type RootMutation {
