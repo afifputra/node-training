@@ -337,6 +337,39 @@ const user = async (_: any, req: Request) => {
   };
 };
 
+const updateStatus = async ({ status }: { status: string }, req: Request) => {
+  if (!req.isAuth) {
+    const error = new Error("Not authenticated.");
+    error.code = 401;
+    throw error;
+  }
+
+  const { userId } = req;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      const error = new Error("No user found!");
+      error.code = 404;
+      throw error;
+    }
+
+    user.status = status;
+
+    await user.save();
+
+    return {
+      ...user.toJSON(),
+      _id: user._id.toString(),
+    };
+  } catch (err) {
+    const error = new Error("Something went wrong!");
+    error.code = 500;
+    throw error;
+  }
+};
+
 const resolvers = {
   createUser,
   login,
@@ -346,6 +379,7 @@ const resolvers = {
   updatePost,
   deletePost,
   user,
+  updateStatus,
 };
 
 export default resolvers;
