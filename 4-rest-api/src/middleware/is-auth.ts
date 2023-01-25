@@ -16,7 +16,7 @@ const isAuth: RequestHandler = (req, res, next) => {
       throw new Error("Not authenticated.");
     }
 
-    const decodedToken = Jwt.verify(token, "rimurutempest") as { userId: string };
+    const decodedToken = Jwt.verify(token, process.env.SECRET_KEY ?? "tempestkick") as { userId: string };
 
     if (!decodedToken) {
       throw new Error("Not authenticated.");

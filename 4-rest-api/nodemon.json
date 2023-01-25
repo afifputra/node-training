@@ -1,0 +1,9 @@
+{
+  "env": {
+    "DB_NAME": "web-app",
+    "DB_PASSWORD": "online123",
+    "COLLECTION": "web-app",
+    "SECRET_KEY": "rimurutempest",
+    "PORT": 3003
+  }
+}
