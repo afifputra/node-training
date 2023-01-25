@@ -6,6 +6,7 @@ import path from "path";
 import multer from "multer";
 import { v4 } from "uuid";
 import socket from "./socket";
+import helmet from "helmet";
 
 import FeedRoutes from "./routes/feed";
 import UserRoutes from "./routes/auth";
@@ -39,6 +40,7 @@ const fileFilter = (_: Express.Request, file: globalThis.Express.Multer.File, cb
 };
 
 app.use(Express.json());
+app.use(helmet());
 app.use(multer({ storage: fileStorage, fileFilter }).single("image"));
 app.use("/dist/images", Express.static(path.join(__dirname, "..", "dist", "images")));
 

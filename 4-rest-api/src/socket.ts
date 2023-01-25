@@ -16,6 +16,11 @@ const init = (httpServer: http.Server) => {
     socket.on("disconnect", () => {
       // console.log("Client disconnected");
     });
+
+    socket.on("logout", (data) => {
+      // console.log("logout", data);
+      socket.broadcast.emit("logout", data);
+    });
   });
 };
 
